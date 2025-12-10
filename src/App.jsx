@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
+import LoginModal from './components/LoginModal';
 
 function App() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Ouvrir la modale après 1 seconde comme demandé initialement
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoginModalOpen(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogin = (userData) => {
+    setUser(userData);
+    setIsLoginModalOpen(false);
+    // Vous pouvez utiliser userData.name et userData.email ici
+    console.log('Utilisateur connecté:', userData);
+    alert(`Bonjour ${userData.name} !`);
+  };
+
   // État pour gérer les pièces de puzzle avec leurs positions
   const [puzzlePieces, setPuzzlePieces] = useState([
     { 
@@ -112,6 +132,13 @@ function App() {
           />
         ))}
       </div>
+      
+      {/* Pop-up de connexion */}
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onLogin={handleLogin}
+      />
     </div>
   );
 }
