@@ -17,9 +17,9 @@ function App() {
   const handleLogin = (userData) => {
     setUser(userData);
     setIsLoginModalOpen(false);
-    // Vous pouvez utiliser userData.name et userData.email ici
+    // Vous pouvez utiliser userData.firstName, userData.lastName et userData.email ici
     console.log('Utilisateur connecté:', userData);
-    alert(`Bonjour ${userData.name} !`);
+    alert(`Bonjour ${userData.firstName} ${userData.lastName} !`);
   };
 
   // État pour gérer les pièces de puzzle avec leurs positions
