@@ -6,23 +6,23 @@ function App() {
   const [puzzlePieces, setPuzzlePieces] = useState([
     { 
       id: 1,
-      color: 'text-blue-500', 
+      color: 'bg-blue-500', 
       position: { x: window.innerWidth * 0.65, y: window.innerHeight * 0.15 },
-      rotation: 15,
+      rotation: 0,
       isDragging: false
     },
     { 
       id: 2,
-      color: 'text-red-500', 
+      color: 'bg-red-500', 
       position: { x: window.innerWidth * 0.75, y: window.innerHeight * 0.45 },
-      rotation: -20,
+      rotation: 0,
       isDragging: false
     },
     { 
       id: 3,
-      color: 'text-green-500', 
+      color: 'bg-green-500', 
       position: { x: window.innerWidth * 0.60, y: window.innerHeight * 0.65 },
-      rotation: 30,
+      rotation: 0,
       isDragging: false
     },
   ]);
@@ -32,6 +32,7 @@ function App() {
 
   // Fonction pour commencer à déplacer une pièce
   const handleMouseDown = (e, pieceId) => {
+    e.preventDefault(); // Empêche les traces fantômes
     const piece = puzzlePieces.find(p => p.id === pieceId);
     if (piece) {
       setDraggedPiece(pieceId);
@@ -117,4 +118,3 @@ function App() {
 }
 
 export default App;
-
