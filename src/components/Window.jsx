@@ -1,7 +1,7 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-const Window = ({ title, content, onClose, color, hasActionButton }) => {
+const Window = ({ title, content, onClose, color, hasActionButton, onNext }) => {
   return (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-white rounded-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 z-50">
       {/* Barre de titre */}
@@ -27,7 +27,7 @@ const Window = ({ title, content, onClose, color, hasActionButton }) => {
           <div className="flex justify-end pt-2">
             <button 
               className={`px-4 py-2 rounded text-white font-medium shadow-md transition-transform hover:scale-105 active:scale-95 ${color}`}
-              onClick={() => alert("Action déclenchée !")} // Action par défaut pour l'exemple
+              onClick={onNext} // Appelle la fonction de navigation
             >
               Suivant →
             </button>
