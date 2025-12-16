@@ -16,8 +16,14 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md transform transition-all scale-100 relative">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Connecte-toi</h2>
+      <div className="bg-white/90 backdrop-blur-md border border-white/50 rounded-xl shadow-2xl p-6 w-full max-w-sm transform transition-all scale-100 relative">
+        <div className="flex justify-center mb-6">
+          <div className="p-4 bg-blue-100 rounded-full border border-blue-200">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+        </div>
         
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="flex gap-4">
