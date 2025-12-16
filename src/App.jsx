@@ -1,66 +1,55 @@
 import React, { useState } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
-import Window from './components/Window';
+import PageVerte from './components/PageVerte';
 
 function App() {
   // État pour gérer les pièces de puzzle
-  // Plus besoin de isDragging ici
   const puzzlePieces = [
     { 
       id: 1,
       color: 'bg-blue-500',
-      title: 'Projets Bleus',
-      content: 'Voici la liste de vos projets en cours...',
-      hasActionButton: true, 
       position: { x: window.innerWidth * 0.25, y: window.innerHeight * 0.5 },
       rotation: 0,
     },
     { 
       id: 2,
       color: 'bg-green-500',
-      title: 'Statut Vert',
-      content: 'Tous les systèmes sont opérationnels.',
-      hasActionButton: true, 
       position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 },
       rotation: 0,
     },
     { 
       id: 3,
       color: 'bg-red-500',
-      title: 'Alertes Rouges',
-      content: 'Attention : 3 notifications importantes !',
-      hasActionButton: true, 
       position: { x: window.innerWidth * 0.75, y: window.innerHeight * 0.5 },
       rotation: 0,
     },
   ];
 
-  // Fenêtre ouverte (null si aucune)
-  const [activeWindow, setActiveWindow] = useState(null);
+  // État pour savoir quelle page est active (null = bureau principal)
+  const [activePage, setActivePage] = useState(null);
 
-  // Fonction simple pour ouvrir la fenêtre au clic
-  const handlePieceClick = (piece) => {
-    setActiveWindow(piece);
+  // Fonction pour ouvrir une page au clic sur un carré
+  const handlePieceClick = (pieceId) => {
+    setActivePage(pieceId);
   };
 
-  // Fonction pour passer à la fenêtre suivante
-  const handleNextWindow = () => {
-    if (!activeWindow) return;
-    
-    const currentId = activeWindow.id;
-    let nextId = currentId + 1;
-    
-    if (nextId > 3) {
-      setActiveWindow(null); // Fin de la séquence
-      return;
-    }
-
-    const nextPiece = puzzlePieces.find(p => p.id === nextId);
-    if (nextPiece) {
-      setActiveWindow(nextPiece);
-    }
+  // Fonction pour revenir au bureau
+  const handleBack = () => {
+    setActivePage(null);
   };
 
+  // Fonction pour passer à la page suivante (ou revenir au bureau)
+  const handleNext = () => {
+    // Depuis PageVerte (id 2), on retourne au bureau
+    setActivePage(null);
+  };
+
+  // Si la page verte est active, on l'affiche en plein écran
+  if (activePage === 2) {
+    return <PageVerte onBack={handleBack} onNext={handleNext} />;
+  }
+
+  // Sinon, on affiche le bureau avec les carrés
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none">
       {/* Fond d'écran noir */}
@@ -77,21 +66,9 @@ function App() {
             color={piece.color}
             position={piece.position}
             rotation={piece.rotation}
-            onClick={() => handlePieceClick(piece)}
+            onClick={() => handlePieceClick(piece.id)}
           />
         ))}
-
-        {/* Fenêtre active (Onglet) */}
-        {activeWindow && (
-          <Window 
-            title={activeWindow.title}
-            content={activeWindow.content}
-            color={activeWindow.color}
-            hasActionButton={activeWindow.hasActionButton}
-            onNext={handleNextWindow}
-            onClose={() => setActiveWindow(null)}
-          />
-        )}
       </div>
     </div>
   );
