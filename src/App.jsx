@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
 import Quiz from './components/Quiz';
-import PageVerte from './components/PageVerte';
-import PageRouge from './components/PageRouge';
 
 function App() {
   // État pour gérer les pièces de puzzle
@@ -55,17 +53,9 @@ function App() {
     setActivePage(nextId);
   };
 
-  // Si une page est active, on affiche la page correspondante
+  // Si le carré bleu est cliqué, on affiche le Quiz
   if (activePage === 1) {
     return <Quiz onBack={handleBack} />;
-  }
-  
-  if (activePage === 2) {
-    return <PageVerte onBack={handleBack} onNext={handleNext} />;
-  }
-  
-  if (activePage === 3) {
-    return <PageRouge onBack={handleBack} onNext={handleNext} />;
   }
 
   // Sinon, on affiche le bureau avec les carrés
