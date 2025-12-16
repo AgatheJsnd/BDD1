@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
-import PageVerte from './components/PageVerte';
+import Quiz from './components/Quiz';
 
 function App() {
   // État pour gérer les pièces de puzzle
@@ -44,9 +44,9 @@ function App() {
     setActivePage(null);
   };
 
-  // Si la page verte est active, on l'affiche en plein écran
+  // Si le carré vert est cliqué, on affiche le Quiz
   if (activePage === 2) {
-    return <PageVerte onBack={handleBack} onNext={handleNext} />;
+    return <Quiz onBack={handleBack} />;
   }
 
   // Sinon, on affiche le bureau avec les carrés
