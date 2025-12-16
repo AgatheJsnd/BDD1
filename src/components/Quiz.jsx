@@ -65,10 +65,12 @@ const Quiz = ({ onBack }) => {
 
       {/* Carte du Quiz */}
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10 relative">
-        {/* Titre */}
-        <h1 className="text-4xl font-bold text-center mb-8 text-red-900">
-          LE GRAND QUIZ D'OR ET DE POURPRE
-        </h1>
+        {/* Titre - Visible uniquement sur la première question */}
+        {currentQuestion === 0 && (
+          <h1 className="text-4xl font-bold text-center mb-8 text-red-900">
+            T'es chaud en quoi ?
+          </h1>
+        )}
 
         {/* Bordure dorée à gauche */}
         <div className="border-l-8 border-yellow-500 pl-6 mb-8">
