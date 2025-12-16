@@ -69,13 +69,15 @@ const EvaluationExpert = ({ onBack }) => {
 
       {/* Carte de l'évaluation */}
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10">
-        {/* Titre */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-red-900 mb-2">
-            ÉVALUATION EXPERT
-          </h1>
-          <div className="w-32 h-1 bg-gradient-to-r from-yellow-500 to-red-700 mx-auto"></div>
-        </div>
+        {/* Titre - Visible uniquement sur la première question */}
+        {currentQuestion === 0 && (
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-red-900 mb-2">
+              Qu'est ce qui te hype ?
+            </h1>
+            <div className="w-32 h-1 bg-gradient-to-r from-yellow-500 to-red-700 mx-auto"></div>
+          </div>
+        )}
 
         {/* Question actuelle */}
         <div className="border-l-8 border-yellow-500 pl-6 mb-8">
