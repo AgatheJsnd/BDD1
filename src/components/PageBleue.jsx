@@ -8,12 +8,14 @@ const PageBleue = ({ onBack }) => {
   const questions = [
     {
       id: 1,
-      question: "Que symbolise principalement la couleur bleue ?",
+      question: "Travail de groupe au lycée, c'est la crise. Quel rôle prends-tu naturellement ?",
       options: [
-        { label: "A", text: "La passion et l'énergie" },
-        { label: "B", text: "Le calme, la confiance et la sérénité", isCorrect: true },
-        { label: "C", text: "La nature et la croissance" },
-        { label: "D", text: "Le mystère et le luxe" }
+        { label: "A", text: "Je recadre tout le monde sur l'objectif : avoir la meilleure note possible." },
+        { label: "B", text: "Je motive l'équipe et je m'occupe de la présentation orale pour vendre le truc." },
+        { label: "C", text: "Je vérifie toutes les sources et je structure le plan pour que ce soit logique." },
+        { label: "D", text: "Je fais le gros du travail technique/rédactionnel, je mets les mains dans le cambouis." },
+        { label: "E", text: "Je propose une idée complètement folle pour se démarquer des autres groupes." },
+        { label: "F", text: "Je m'occupe des slides et du visuel pour que ce soit \"Wow\"." }
       ]
     },
     {
@@ -96,9 +98,9 @@ const PageBleue = ({ onBack }) => {
                   onClick={() => handleAnswerClick(currentQ.id, option.label)}
                   className={`
                     flex items-start gap-3 p-4 rounded-xl border-2 transition-all text-left
-                    ${isSelected && isCorrect ? 'bg-blue-800 text-white border-blue-900' : ''}
-                    ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400' : ''}
-                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-blue-500 hover:bg-blue-50' : ''}
+                    ${isSelected && isCorrect ? 'bg-blue-800 text-gray-900 border-blue-900' : ''}
+                    ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400 text-gray-900' : ''}
+                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-blue-500 hover:bg-blue-50 text-gray-900' : ''}
                   `}
                 >
                   <span className={`
