@@ -5,6 +5,7 @@ import { saveUserData, getAllUsers } from './lib/userService';
 import Quiz from './components/Quiz';
 import EvaluationExpert from './components/EvaluationExpert';
 import PageBleue from './components/PageBleue';
+import PageVerte from './components/PageVerte';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -88,9 +89,9 @@ function App() {
     return <PageBleue onBack={handleBack} onNext={() => setActivePage(2)} />;
   }
 
-  // Si le carré vert (id: 2) est cliqué, on affiche le Quiz
+  // Si le carré vert (id: 2) est cliqué, on affiche la Page Verte
   if (activePage === 2) {
-    return <Quiz onBack={handleBack} onNext={() => setActivePage(3)} />;
+    return <PageVerte onBack={handleBack} onNext={() => setActivePage(3)} />;
   }
 
   // Si le carré rouge (id: 3) est cliqué, on affiche l'Évaluation Expert
