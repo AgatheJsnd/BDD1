@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const Quiz = ({ onBack }) => {
+const Quiz = ({ onBack, onNext }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
@@ -48,8 +48,12 @@ const Quiz = ({ onBack }) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Fin du quiz, retour au bureau
-      onBack();
+      // Fin du quiz, aller au quiz rouge
+      if (onNext) {
+        onNext();
+      } else {
+        onBack();
+      }
     }
   };
 
