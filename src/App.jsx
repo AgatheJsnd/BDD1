@@ -57,7 +57,7 @@ function App() {
 
   // Si le carré bleu (id: 1) est cliqué, on affiche la Page Bleue
   if (activePage === 1) {
-    return <PageBleue onBack={handleBack} onNext={handleNext} />;
+    return <PageBleue onBack={handleBack} />;
   }
 
   // Si le carré vert (id: 2) est cliqué, on affiche le Quiz
