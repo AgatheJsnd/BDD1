@@ -50,6 +50,12 @@ const Quiz = ({ onBack }) => {
     }
   };
 
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
   const currentQ = questions[currentQuestion];
 
   return (
