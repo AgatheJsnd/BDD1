@@ -128,7 +128,7 @@ const Quiz = ({ onBack }) => {
             onClick={handleNext}
             className="px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
           >
-            {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+            {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>
         </div>
       </div>
