@@ -85,12 +85,12 @@ function App() {
 
   // Si le carré bleu (id: 1) est cliqué, on affiche la Page Bleue
   if (activePage === 1) {
-    return <PageBleue onBack={handleBack} />;
+    return <PageBleue onBack={handleBack} onNext={() => setActivePage(2)} />;
   }
 
   // Si le carré vert (id: 2) est cliqué, on affiche le Quiz
   if (activePage === 2) {
-    return <Quiz onBack={handleBack} />;
+    return <Quiz onBack={handleBack} onNext={() => setActivePage(3)} />;
   }
 
   // Si le carré rouge (id: 3) est cliqué, on affiche l'Évaluation Expert

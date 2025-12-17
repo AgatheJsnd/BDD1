@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const Quiz = ({ onBack }) => {
+const Quiz = ({ onBack, onNext }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
@@ -48,8 +48,12 @@ const Quiz = ({ onBack }) => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Fin du quiz, retour au bureau
-      onBack();
+      // Fin du quiz, aller au quiz rouge
+      if (onNext) {
+        onNext();
+      } else {
+        onBack();
+      }
     }
   };
 
@@ -128,7 +132,7 @@ const Quiz = ({ onBack }) => {
             onClick={handleNext}
             className="px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
           >
-            {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+            {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>
         </div>
       </div>
