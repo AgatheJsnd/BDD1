@@ -5,13 +5,16 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
-// Vérification que les clés sont bien configurées
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ ERREUR: Les clés Supabase ne sont pas configurées !')
-  console.error('📝 Créez un fichier .env à la racine du projet avec :')
-  console.error('   VITE_SUPABASE_URL=votre-url')
-  console.error('   VITE_SUPABASE_ANON_KEY=votre-cle')
-  throw new Error('Configuration Supabase manquante')
+// Mode DEV : Si les clés ne sont pas configurées, on continue sans Supabase
+export const isSupabaseConfigured = !!(supabaseUrl && supabaseAnonKey)
+
+if (!isSupabaseConfigured) {
+  console.warn('⚠️ MODE DEV : Supabase non configuré')
+  console.warn('📝 Les données ne seront PAS sauvegardées')
+  console.warn('💡 Pour activer Supabase : créez un fichier .env avec vos clés')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Créer le client seulement si configuré, sinon null
+export const supabase = isSupabaseConfigured 
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null
