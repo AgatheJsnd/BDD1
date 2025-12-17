@@ -13,25 +13,28 @@ const EvaluationExpert = ({ onBack }) => {
     {
       id: 1,
       type: 'qcm',
-      question: 'Quel code couleur correspond au fond "Or" de cette page ?',
+      question: 'Quel domaine t\'attire le plus pour ton futur métier ?',
       options: [
-        { label: 'A', value: '#FFD700' },
-        { label: 'B', value: '#E1AD01' },
-        { label: 'C', value: '#D4AF37' },
-        { label: 'D', value: '#C5A000' }
+        { label: 'A', value: 'Fintech & Crypto' },
+        { label: 'B', value: 'Luxe & Mode' },
+        { label: 'C', value: 'Santé & Sport' },
+        { label: 'D', value: 'Jeux Vidéo & Divertissement' },
+        { label: 'E', value: 'Environnement & Impact' },
+        { label: 'F', value: 'Automobile & Espace' },
+        { label: 'G', value: 'Politique & Société' }
       ]
     },
     {
       id: 2,
       type: 'text',
-      question: 'Expliquez pourquoi le contraste des couleurs est important dans une interface.',
+      question: 'Raconte-nous quelque chose dont tu es fier(e) (Projet perso, sport, asso, réussite scolaire...) :',
       placeholder: 'Tapez votre réponse ici...'
     },
     {
       id: 3,
       type: 'text',
-      question: 'Décrivez en quelques mots votre expérience utilisateur sur ce quiz.',
-      placeholder: 'Partagez votre avis...'
+      question: 'Qu\'est-ce que tu fais de ton temps libre quand tu n\'as plus de batterie sur ton tel ? (Passions/Hobby)',
+      placeholder: 'Tapez votre réponse ici...'
     }
   ];
 
@@ -108,7 +111,7 @@ const EvaluationExpert = ({ onBack }) => {
                     `}>
                       {option.label}
                     </span>
-                    <span className="font-mono text-gray-700">{option.value}</span>
+                    <span className="text-gray-700">{option.value}</span>
                   </button>
                 );
               })}
@@ -117,12 +120,20 @@ const EvaluationExpert = ({ onBack }) => {
 
           {/* Si c'est un champ texte */}
           {currentQ.type === 'text' && (
-            <textarea
-              value={answers[`q${currentQ.id}`] || ''}
-              onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
-              placeholder={currentQ.placeholder}
-              className="w-full h-32 p-4 border-2 border-gray-200 rounded-xl focus:border-yellow-500 focus:outline-none resize-none"
-            />
+            <div className="w-full">
+              <textarea
+                value={answers[`q${currentQ.id}`] || ''}
+                onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
+                placeholder={currentQ.placeholder}
+                className="w-full min-h-[160px] p-4 border-2 border-gray-300 rounded-xl focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none resize-y bg-white text-gray-900 text-base"
+                autoComplete="off"
+                spellCheck="true"
+                rows={6}
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                {answers[`q${currentQ.id}`]?.length || 0} caractères
+              </p>
+            </div>
           )}
         </div>
 
