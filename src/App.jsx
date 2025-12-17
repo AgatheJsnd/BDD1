@@ -22,15 +22,13 @@ function App() {
     setUser(userData);
     setIsLoginModalOpen(false);
     
-    // Envoyer les données à Supabase
+    // Envoyer les données à Supabase (silencieusement)
     console.log('Envoi des données à Supabase:', userData);
     const result = await saveUserData(userData);
     
     if (result.success) {
-      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nVos données ont été enregistrées sur Supabase.`);
       console.log('Données enregistrées:', result.data);
     } else {
-      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nErreur lors de l'enregistrement: ${result.error.message}`);
       console.error('Erreur:', result.error);
     }
   };
