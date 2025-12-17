@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
 import LoginModal from './components/LoginModal';
+import { saveUserData, getAllUsers } from './lib/userService';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -14,12 +15,21 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogin = (userData) => {
+  const handleLogin = async (userData) => {
     setUser(userData);
     setIsLoginModalOpen(false);
-    // Vous pouvez utiliser userData.firstName, userData.lastName et userData.email ici
-    console.log('Utilisateur connecté:', userData);
-    alert(`Bonjour ${userData.firstName} ${userData.lastName} !`);
+    
+    // Envoyer les données à Supabase
+    console.log('Envoi des données à Supabase:', userData);
+    const result = await saveUserData(userData);
+    
+    if (result.success) {
+      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nVos données ont été enregistrées sur Supabase.`);
+      console.log('Données enregistrées:', result.data);
+    } else {
+      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nErreur lors de l'enregistrement: ${result.error.message}`);
+      console.error('Erreur:', result.error);
+    }
   };
 
   // État pour gérer les pièces de puzzle avec leurs positions
