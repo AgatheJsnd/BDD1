@@ -47,6 +47,9 @@ const Quiz = ({ onBack }) => {
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
+    } else {
+      // Fin du quiz, retour au bureau
+      onBack();
     }
   };
 
@@ -123,10 +126,9 @@ const Quiz = ({ onBack }) => {
         <div className="flex justify-end items-center mt-8">
           <button
             onClick={handleNext}
-            disabled={currentQuestion === questions.length - 1}
-            className="px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
           >
-            Suivant →
+            {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
           </button>
         </div>
       </div>

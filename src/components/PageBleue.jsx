@@ -49,7 +49,6 @@ const PageBleue = ({ onBack }) => {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       // Fin du quiz, retour au bureau
-      alert('Bravo ! Vous avez terminé le Quiz Bleu.');
       onBack();
     }
   };

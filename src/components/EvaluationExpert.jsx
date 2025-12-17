@@ -49,7 +49,6 @@ const EvaluationExpert = ({ onBack }) => {
   };
 
   const handleSubmit = () => {
-    alert('Vos réponses ont été validées !');
     onBack(); // Retour au bureau après validation
   };
 
