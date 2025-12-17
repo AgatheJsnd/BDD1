@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
 import Quiz from './components/Quiz';
+import EvaluationExpert from './components/EvaluationExpert';
 
 function App() {
   // État pour gérer les pièces de puzzle
@@ -30,7 +31,10 @@ function App() {
 
   // Fonction pour ouvrir une page au clic sur un carré
   const handlePieceClick = (pieceId) => {
-    setActivePage(pieceId);
+    // Le carré vert (id: 2) ouvre Quiz, le carré rouge (id: 3) ouvre EvaluationExpert
+    if (pieceId === 2 || pieceId === 3) {
+      setActivePage(pieceId);
+    }
   };
 
   // Fonction pour revenir au bureau
@@ -38,15 +42,14 @@ function App() {
     setActivePage(null);
   };
 
-  // Fonction pour passer à la page suivante (ou revenir au bureau)
-  const handleNext = () => {
-    // Depuis PageVerte (id 2), on retourne au bureau
-    setActivePage(null);
-  };
-
   // Si le carré vert est cliqué, on affiche le Quiz
   if (activePage === 2) {
     return <Quiz onBack={handleBack} />;
+  }
+
+  // Si le carré rouge est cliqué, on affiche l'Évaluation Expert
+  if (activePage === 3) {
+    return <EvaluationExpert onBack={handleBack} />;
   }
 
   // Sinon, on affiche le bureau avec les carrés
@@ -59,14 +62,15 @@ function App() {
 
       {/* Contenu du bureau */}
       <div className="relative h-full w-full">
-        {/* Pièces de puzzle fixes (non cliquables) */}
+        {/* Pièces de puzzle */}
         {puzzlePieces.map((piece) => (
           <PuzzlePiece
             key={piece.id}
             color={piece.color}
             position={piece.position}
             rotation={piece.rotation}
-            onClick={() => handlePieceClick(piece.id)}
+            onClick={piece.id === 2 || piece.id === 3 ? () => handlePieceClick(piece.id) : undefined}
+            isClickable={piece.id === 2 || piece.id === 3}
           />
         ))}
       </div>
