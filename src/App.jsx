@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
+import Quiz from './components/Quiz';
 
 function App() {
   // État pour gérer les pièces de puzzle
@@ -24,6 +25,31 @@ function App() {
     },
   ];
 
+  // État pour savoir quelle page est active (null = bureau principal)
+  const [activePage, setActivePage] = useState(null);
+
+  // Fonction pour ouvrir une page au clic sur un carré
+  const handlePieceClick = (pieceId) => {
+    setActivePage(pieceId);
+  };
+
+  // Fonction pour revenir au bureau
+  const handleBack = () => {
+    setActivePage(null);
+  };
+
+  // Fonction pour passer à la page suivante (ou revenir au bureau)
+  const handleNext = () => {
+    // Depuis PageVerte (id 2), on retourne au bureau
+    setActivePage(null);
+  };
+
+  // Si le carré vert est cliqué, on affiche le Quiz
+  if (activePage === 2) {
+    return <Quiz onBack={handleBack} />;
+  }
+
+  // Sinon, on affiche le bureau avec les carrés
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none">
       {/* Fond d'écran noir */}
@@ -40,6 +66,7 @@ function App() {
             color={piece.color}
             position={piece.position}
             rotation={piece.rotation}
+            onClick={() => handlePieceClick(piece.id)}
           />
         ))}
       </div>
