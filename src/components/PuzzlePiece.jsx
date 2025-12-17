@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PuzzlePiece = ({ color, position, rotation = 0 }) => {
+const PuzzlePiece = ({ color, position, rotation = 0, onClick }) => {
   return (
     <div 
       className="absolute z-10"
@@ -12,7 +12,8 @@ const PuzzlePiece = ({ color, position, rotation = 0 }) => {
     >
       {/* Bloc simple (carré) sans interaction */}
       <div 
-        className={`w-40 h-40 shadow-2xl rounded-xl ${color}`}
+        className={`w-40 h-40 shadow-2xl rounded-xl ${color} ${onClick ? 'cursor-pointer' : ''}`}
+        onClick={onClick}
       >
         {/* Effet de bordure/lumière interne pour le style */}
         <div className="w-full h-full rounded-xl border-4 border-white/20 shadow-inner pointer-events-none"></div>
