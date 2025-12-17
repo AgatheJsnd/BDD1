@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 .vite
+.env
 
 # Variables d'environnement (clés API, secrets)
 .env
