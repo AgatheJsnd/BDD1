@@ -1,7 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PuzzlePiece from './components/PuzzlePiece';
+import LoginModal from './components/LoginModal';
+import { saveUserData, getAllUsers } from './lib/userService';
 
 function App() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Ouvrir la modale après 1 seconde comme demandé initialement
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoginModalOpen(true);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleLogin = async (userData) => {
+    setUser(userData);
+    setIsLoginModalOpen(false);
+    
+    // Envoyer les données à Supabase
+    console.log('Envoi des données à Supabase:', userData);
+    const result = await saveUserData(userData);
+    
+    if (result.success) {
+      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nVos données ont été enregistrées sur Supabase.`);
+      console.log('Données enregistrées:', result.data);
+    } else {
+      alert(`Bonjour ${userData.firstName} ${userData.lastName} !\nErreur lors de l'enregistrement: ${result.error.message}`);
+      console.error('Erreur:', result.error);
+    }
+  };
+
   // État pour gérer les pièces de puzzle avec leurs positions
   const [puzzlePieces, setPuzzlePieces] = useState([
     { 
@@ -112,6 +142,13 @@ function App() {
           />
         ))}
       </div>
+      
+      {/* Pop-up de connexion */}
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onLogin={handleLogin}
+      />
     </div>
   );
 }
