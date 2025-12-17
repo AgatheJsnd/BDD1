@@ -20,21 +20,26 @@ const PageBleue = ({ onBack, onNext }) => {
     },
     {
       id: 2,
-      question: "Quelle planète est surnommée la 'Planète Bleue' ?",
+      question: "On te donne 1 million d'euros pour lancer un projet. Tu fais quoi ?",
       options: [
-        { label: "A", text: "Neptune" },
-        { label: "B", text: "Uranus" },
-        { label: "C", text: "La Terre", isCorrect: true },
-        { label: "D", text: "Mars" }
+        { label: "A", text: "J'investis en bourse et crypto pour en faire 10 millions." },
+        { label: "B", text: "Je lance une marque e-commerce et j'inonde les réseaux sociaux de pubs." },
+        { label: "C", text: "Je crée une agence d'analyse pour prédire les tendances futures." },
+        { label: "D", text: "Je finance un labo de recherche pour développer une nouvelle technologie." },
+        { label: "E", text: "Je monte une startup type \"SpaceX\" pour résoudre un problème mondial." },
+        { label: "F", text: "Je produis un film ou un jeu vidéo ultra immersif nouvelle génération." }
       ]
     },
     {
       id: 3,
-      question: "Dans le modèle RGB (écran), le bleu est-il une couleur primaire ?",
+      question: "Ce qui t'énerve le plus dans le monde actuel ?",
       options: [
-        { label: "A", text: "Oui, c'est l'une des trois couleurs primaires lumière", isCorrect: true },
-        { label: "B", text: "Non, c'est une couleur secondaire" },
-        { label: "C", text: "Cela dépend de la luminosité" }
+        { label: "A", text: "Les gens qui perdent de l'argent bêtement." },
+        { label: "B", text: "Les produits nuls qui se vendent juste parce qu'ils ont du bon marketing." },
+        { label: "C", text: "Les fake news et les gens qui parlent sans vérifier les chiffres." },
+        { label: "D", text: "Les sites web qui buggent et les technos mal conçues." },
+        { label: "E", text: "Le manque d'ambition et le \"c'était mieux avant\"." },
+        { label: "F", text: "La laideur des villes et le manque de créativité." }
       ]
     }
   ];
