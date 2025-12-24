@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const EvaluationExpert = ({ onBack }) => {
+const EvaluationExpert = ({ onBack, onNext }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({
     q1: '',
@@ -52,7 +52,11 @@ const EvaluationExpert = ({ onBack }) => {
   };
 
   const handleSubmit = () => {
-    onBack(); // Retour au bureau après validation
+    if (onNext) {
+      onNext(); // Ouvrir la nouvelle page après validation
+    } else {
+      onBack(); // Retour au bureau si pas de page suivante
+    }
   };
 
   const currentQ = questions[currentQuestion];

@@ -6,6 +6,7 @@ import Quiz from './components/Quiz';
 import EvaluationExpert from './components/EvaluationExpert';
 import PageBleue from './components/PageBleue';
 import PageVerte from './components/PageVerte';
+import PageRouge from './components/PageRouge';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -96,7 +97,12 @@ function App() {
 
   // Si le carré rouge (id: 3) est cliqué, on affiche l'Évaluation Expert
   if (activePage === 3) {
-    return <EvaluationExpert onBack={handleBack} />;
+    return <EvaluationExpert onBack={handleBack} onNext={() => setActivePage(4)} />;
+  }
+
+  // Si la page 4 est active, on affiche la Page Rouge
+  if (activePage === 4) {
+    return <PageRouge onBack={handleBack} />;
   }
   // Sinon, on affiche le bureau avec les carrés
   return (
