@@ -123,7 +123,7 @@ const PageVerte = ({ onBack, onNext }) => {
 
         {/* Navigation */}
         <div className="flex justify-end items-center mt-8">
-          <button
+          <button 
             onClick={handleNext}
             className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
           >

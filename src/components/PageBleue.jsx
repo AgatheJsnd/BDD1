@@ -1,21 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { updatePersonaScore } from '../lib/userService';
 
-const PageBleue = ({ onBack, onNext }) => {
+const PageBleue = ({ onBack, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+
+  // Vérification silencieuse de l'email (logs uniquement en cas d'erreur)
+  useEffect(() => {
+    if (!userEmail) {
+      console.warn('⚠️ PageBleue - Aucun email utilisateur fourni');
+    }
+  }, [userEmail]);
+
+  // Mapping des réponses vers les personas
+  const personaMapping = {
+    'A': 'Finance shark',
+    'B': 'Growth Hacker',
+    'C': 'Data Detective',
+    'D': 'Tech builder',
+    'E': 'Visionnary Founder',
+    'F': 'Creative Alchemist'
+  };
 
   const questions = [
     {
       id: 1,
-      question: "Travail de groupe au lycée, c'est la crise. Quel rôle prends-tu naturellement ?",
+      question: "Q1. Travail de groupe au lycée, c'est la crise. Quel rôle prends-tu naturellement ?",
       options: [
-        { label: "A", text: "Je recadre tout le monde sur l'objectif : avoir la meilleure note possible." },
-        { label: "B", text: "Je motive l'équipe et je m'occupe de la présentation orale pour vendre le truc." },
-        { label: "C", text: "Je vérifie toutes les sources et je structure le plan pour que ce soit logique." },
-        { label: "D", text: "Je fais le gros du travail technique/rédactionnel, je mets les mains dans le cambouis." },
-        { label: "E", text: "Je propose une idée complètement folle pour se démarquer des autres groupes." },
-        { label: "F", text: "Je m'occupe des slides et du visuel pour que ce soit \"Wow\"." }
+        { label: "A", text: "La passion et l'énergie" },
+        { label: "B", text: "Le calme, la confiance et la sérénité", isCorrect: true },
+        { label: "C", text: "La nature et la croissance" },
+        { label: "D", text: "Le mystère et le luxe" }
       ]
     },
     {
@@ -51,16 +67,72 @@ const PageBleue = ({ onBack, onNext }) => {
     });
   };
 
-  const handleNext = () => {
+  // Fonction pour sauvegarder toutes les réponses dans Supabase
+  const saveAllAnswersToDatabase = async () => {
+    console.log('🔵 ===== DÉBUT SAUVEGARDE POST-IT BLEU =====');
+    console.log('📧 Email utilisateur:', userEmail);
+    console.log('📋 Réponses sélectionnées:', selectedAnswers);
+
+    if (!userEmail) {
+      console.error('❌ Email utilisateur non disponible');
+      return;
+    }
+
+    // Collecter tous les personas des réponses sélectionnées
+    const personas = [];
+    questions.forEach((question) => {
+      const answerLabel = selectedAnswers[question.id];
+      console.log(`  Question ${question.id}: Réponse sélectionnée = "${answerLabel}"`);
+      if (answerLabel) {
+        const persona = personaMapping[answerLabel];
+        if (persona) {
+          personas.push(persona);
+          console.log(`    → Persona mappé: "${persona}"`);
+        } else {
+          console.warn(`    ⚠️ Aucun persona trouvé pour "${answerLabel}"`);
+        }
+      } else {
+        console.warn(`    ⚠️ Aucune réponse pour la question ${question.id}`);
+      }
+    });
+
+    console.log('🎭 Personas finaux à sauvegarder:', personas);
+
+    if (personas.length === 0) {
+      console.error('❌ Aucune réponse à sauvegarder - ABANDON');
+      return;
+    }
+
+    try {
+      console.log('💾 Appel de updatePersonaScore...');
+      const result = await updatePersonaScore(userEmail, personas, true);
+      console.log('📥 Résultat reçu:', result);
+      
+      if (result.success) {
+        console.log('✅ SUCCÈS: Personas enregistrés dans Supabase:', personas);
+        console.log('✅ Données retournées:', result.data);
+      } else {
+        console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+      }
+      console.log('🔵 ===== FIN SAUVEGARDE =====');
+    } catch (error) {
+      console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      console.error('❌ Stack trace:', error.stack);
+    }
+  };
+
+  const handleNext = async () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Fin du quiz, aller au quiz vert
-      if (onNext) {
-        onNext();
-      } else {
+      // Fin du quiz : sauvegarder toutes les réponses dans Supabase
+      console.log('🔄 Fin du quiz - Début de la sauvegarde...');
+      await saveAllAnswersToDatabase();
+      console.log('🔄 Sauvegarde terminée - Retour au bureau');
+      // Attendre un peu pour s'assurer que la sauvegarde est bien terminée
+      setTimeout(() => {
         onBack();
-      }
+      }, 500);
     }
   };
 
@@ -107,9 +179,9 @@ const PageBleue = ({ onBack, onNext }) => {
                   onClick={() => handleAnswerClick(currentQ.id, option.label)}
                   className={`
                     flex items-start gap-3 p-4 rounded-xl border-2 transition-all text-left
-                    ${isSelected && isCorrect ? 'bg-blue-800 text-gray-900 border-blue-900' : ''}
-                    ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400 text-gray-900' : ''}
-                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-blue-500 hover:bg-blue-50 text-gray-900' : ''}
+                    ${isSelected && isCorrect ? 'bg-blue-800 text-white border-blue-900' : ''}
+                    ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400' : ''}
+                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-blue-500 hover:bg-blue-50' : ''}
                   `}
                 >
                   <span className={`
@@ -133,7 +205,7 @@ const PageBleue = ({ onBack, onNext }) => {
             onClick={handleNext}
             className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
           >
-            {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
+            {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
           </button>
         </div>
       </div>

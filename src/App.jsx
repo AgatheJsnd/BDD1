@@ -87,7 +87,7 @@ function App() {
 
   // Si le carré bleu (id: 1) est cliqué, on affiche la Page Bleue
   if (activePage === 1) {
-    return <PageBleue onBack={handleBack} onNext={() => setActivePage(2)} />;
+    return <PageBleue onBack={handleBack} onNext={() => setActivePage(2)} userEmail={user?.email} />;
   }
 
   // Si le carré vert (id: 2) est cliqué, on affiche la Page Verte
