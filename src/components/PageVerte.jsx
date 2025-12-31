@@ -6,12 +6,26 @@ const PageVerte = ({ onBack, onNext, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
-  // Mapping des réponses vers les tech_apetites
-  const techApetiteMapping = {
-    'A': 'Dev',
-    'B': 'Analyst',
-    'C': 'Creator',
-    'D': 'Marketer'
+  // Mapping des réponses vers les tech_apetites selon la question
+  const techApetiteMappings = {
+    1: { // Question 1
+      'A': 'Profil Data/Maths',
+      'B': 'Profil Appliqué/Ingé',
+      'C': 'Profil Littéraire/Créa',
+      'D': 'Profil Smart/Resourceful'
+    },
+    2: { // Question 2
+      'A': 'Curiosité Technique',
+      'B': 'Curiosité Business',
+      'C': 'Curiosité Créative',
+      'D': 'Détentes'
+    },
+    3: { // Question 3
+      'A': 'Dev',
+      'B': 'Analyst',
+      'C': 'Creator',
+      'D': 'Marketer'
+    }
   };
 
   const questions = [
@@ -65,18 +79,24 @@ const PageVerte = ({ onBack, onNext, userEmail }) => {
       return;
     }
 
-    // Collecter tous les tech_apetites des réponses sélectionnées
+    // Collecter tous les tech_apetites des réponses sélectionnées selon le mapping de chaque question
     const techApetites = [];
     questions.forEach((question) => {
       const answerLabel = selectedAnswers[question.id];
       console.log(`  Question ${question.id}: Réponse sélectionnée = "${answerLabel}"`);
       if (answerLabel) {
-        const techApetite = techApetiteMapping[answerLabel];
-        if (techApetite) {
-          techApetites.push(techApetite);
-          console.log(`    → Tech_apetite mappé: "${techApetite}"`);
+        // Utiliser le mapping spécifique à cette question
+        const questionMapping = techApetiteMappings[question.id];
+        if (questionMapping) {
+          const techApetite = questionMapping[answerLabel];
+          if (techApetite) {
+            techApetites.push(techApetite);
+            console.log(`    → Tech_apetite mappé: "${techApetite}"`);
+          } else {
+            console.warn(`    ⚠️ Aucun tech_apetite trouvé pour "${answerLabel}" dans le mapping de la question ${question.id}`);
+          }
         } else {
-          console.warn(`    ⚠️ Aucun tech_apetite trouvé pour "${answerLabel}"`);
+          console.warn(`    ⚠️ Aucun mapping trouvé pour la question ${question.id}`);
         }
       } else {
         console.warn(`    ⚠️ Aucune réponse pour la question ${question.id}`);
