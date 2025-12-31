@@ -97,7 +97,7 @@ function App() {
 
   // Si le carré rouge (id: 3) est cliqué, on affiche l'Évaluation Expert
   if (activePage === 3) {
-    return <EvaluationExpert onBack={handleBack} onNext={() => setActivePage(4)} />;
+    return <EvaluationExpert onBack={handleBack} onNext={() => setActivePage(4)} userEmail={user?.email} />;
   }
 
   // Si la page 4 est active, on affiche la Page Rouge

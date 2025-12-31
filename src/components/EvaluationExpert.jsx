@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { updateInterestSector, updateProudProject, updateHobbies } from '../lib/userService';
 
-const EvaluationExpert = ({ onBack, onNext }) => {
+const EvaluationExpert = ({ onBack, onNext, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({
     q1: '',
@@ -51,12 +52,77 @@ const EvaluationExpert = ({ onBack, onNext }) => {
     }
   };
 
-  const handleSubmit = () => {
-    if (onNext) {
-      onNext(); // Ouvrir la nouvelle page après validation
-    } else {
-      onBack(); // Retour au bureau si pas de page suivante
+  const handleSubmit = async () => {
+    console.log('🔴 ===== VALIDATION POST-IT ROUGE =====');
+    console.log('📧 Email utilisateur:', userEmail);
+    console.log('📋 Réponses:', answers);
+
+    if (!userEmail) {
+      console.warn('⚠️ Email utilisateur non disponible');
+      // Continuer quand même pour ne pas bloquer l'utilisateur
     }
+
+    // Sauvegarder la réponse de la question 1 (interest_sector)
+    if (answers.q1 && userEmail) {
+      console.log('💼 Sauvegarde de interest_sector:', answers.q1);
+      try {
+        const result = await updateInterestSector(userEmail, answers.q1);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Interest sector enregistré:', answers.q1);
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q1) {
+      console.warn('⚠️ Aucune réponse pour la question 1 (interest_sector)');
+    }
+
+    // Sauvegarder la réponse de la question 2 (proud_project)
+    if (answers.q2 && userEmail) {
+      console.log('📝 Sauvegarde de proud_project:', answers.q2);
+      try {
+        const result = await updateProudProject(userEmail, answers.q2);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Proud project enregistré');
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q2) {
+      console.warn('⚠️ Aucune réponse pour la question 2 (proud_project)');
+    }
+
+    // Sauvegarder la réponse de la question 3 (hobbies)
+    if (answers.q3 && userEmail) {
+      console.log('🎨 Sauvegarde de hobbies:', answers.q3);
+      try {
+        const result = await updateHobbies(userEmail, answers.q3);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Hobbies enregistré');
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q3) {
+      console.warn('⚠️ Aucune réponse pour la question 3 (hobbies)');
+    }
+
+    console.log('🔴 ===== FIN VALIDATION =====');
+
+    // Attendre un peu pour s'assurer que la sauvegarde est terminée
+    setTimeout(() => {
+      if (onNext) {
+        onNext(); // Ouvrir la nouvelle page après validation
+      } else {
+        onBack(); // Retour au bureau si pas de page suivante
+      }
+    }, 500);
   };
 
   const currentQ = questions[currentQuestion];

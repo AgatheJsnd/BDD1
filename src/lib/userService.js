@@ -438,3 +438,229 @@ export async function updateTechApetite(email, techApetites) {
     return { success: false, error: error.message || error }
   }
 }
+
+/**
+ * Mettre à jour le interest_sector d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {string} interestSector - Le secteur d'intérêt sélectionné
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateInterestSector(email, interestSector) {
+  console.log('🔧 updateInterestSector appelé avec:', { email, interestSector });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    if (!interestSector || interestSector.trim() === '') {
+      console.warn('⚠️ Interest sector vide ou invalide')
+      return { success: false, error: 'Interest sector manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    console.log('📥 Résultat getUserByEmail:', userResult);
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        console.log('✅ Candidat créé:', newData);
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    console.log('✅ Candidat trouvé/créé avec ID:', candidatId);
+    
+    const interestSectorValue = String(interestSector).trim();
+    console.log('💼 Interest sector à enregistrer:', interestSectorValue);
+
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ interest_sector: interestSectorValue })
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      console.error('❌ Code d\'erreur:', error.code);
+      console.error('❌ Message d\'erreur:', error.message);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! Données retournées:', data);
+    if (data && data[0]) {
+      console.log('✅ interest_sector après mise à jour:', data[0].interest_sector);
+    }
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateInterestSector:', error)
+    console.error('❌ Stack:', error.stack);
+    return { success: false, error: error.message || error }
+  }
+}
+
+/**
+ * Mettre à jour le proud_project d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {string} proudProject - Le texte du projet dont on est fier
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateProudProject(email, proudProject) {
+  console.log('🔧 updateProudProject appelé avec:', { email, proudProject });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    
+    // Enregistrer le texte tel quel, sans modification
+    const proudProjectValue = proudProject || '';
+    console.log('📝 Proud project à enregistrer (tel quel):', proudProjectValue);
+
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ proud_project: proudProjectValue })
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! proud_project enregistré');
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateProudProject:', error)
+    return { success: false, error: error.message || error }
+  }
+}
+
+/**
+ * Mettre à jour le hobbies d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {string} hobbies - Le texte des hobbies/passions
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateHobbies(email, hobbies) {
+  console.log('🔧 updateHobbies appelé avec:', { email, hobbies });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    
+    // Enregistrer le texte tel quel, sans modification
+    const hobbiesValue = hobbies || '';
+    console.log('🎨 Hobbies à enregistrer (tel quel):', hobbiesValue);
+
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ hobbies: hobbiesValue })
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! hobbies enregistré');
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateHobbies:', error)
+    return { success: false, error: error.message || error }
+  }
+}
