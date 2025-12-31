@@ -122,6 +122,59 @@ export async function updateCandidat(id, updates) {
 }
 
 /**
+ * Calculer le persona le plus fréquent dans un tableau de personas
+ * @param {Array<string>} personas - Tableau des personas
+ * @returns {string|null} Le persona le plus fréquent, ou le premier si tous sont différents
+ */
+function calculateTopPersona(personas) {
+  console.log('🔢 calculateTopPersona appelé avec:', personas);
+  
+  if (!personas || personas.length === 0) {
+    console.warn('⚠️ calculateTopPersona: Tableau vide ou null');
+    return null;
+  }
+
+  // Filtrer les personas valides (non null, non undefined, non vide)
+  const validPersonas = personas.filter(p => p && String(p).trim() !== '');
+  
+  if (validPersonas.length === 0) {
+    console.warn('⚠️ calculateTopPersona: Aucun persona valide trouvé');
+    return null;
+  }
+
+  // Compter les occurrences de chaque persona
+  const counts = {};
+  validPersonas.forEach(persona => {
+    const personaStr = String(persona).trim();
+    counts[personaStr] = (counts[personaStr] || 0) + 1;
+  });
+
+  console.log('📊 Comptages des personas:', counts);
+
+  // Trouver le persona avec le plus grand nombre d'occurrences
+  let maxCount = 0;
+  let topPersona = null;
+
+  for (const [persona, count] of Object.entries(counts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      topPersona = persona;
+    }
+  }
+
+  console.log('🔝 Persona le plus fréquent:', topPersona, 'avec', maxCount, 'occurrence(s)');
+
+  // Si tous les personas sont différents (count = 1 pour chacun), prendre le premier
+  if (maxCount === 1 && validPersonas.length > 0) {
+    topPersona = String(validPersonas[0]).trim();
+    console.log('📌 Tous les personas sont différents, on prend le premier:', topPersona);
+  }
+
+  console.log('✅ calculateTopPersona retourne:', topPersona);
+  return topPersona;
+}
+
+/**
  * Mettre à jour les persona_score d'un candidat par email
  * @param {string} email - L'email du candidat
  * @param {Array<string>} personas - Tableau des personas (max 3)
@@ -187,22 +240,47 @@ export async function updatePersonaScore(email, personas, replace = false) {
       console.log('➕ Mode FUSION - Personas finaux:', updatedPersonas);
     }
 
-    console.log('💾 Mise à jour Supabase - ID:', candidatId, 'persona_score:', updatedPersonas);
+    // Calculer le persona le plus fréquent (top_persona)
+    const topPersona = calculateTopPersona(updatedPersonas);
+    console.log('🏆 Top persona calculé:', topPersona);
+    console.log('🏆 Type de topPersona:', typeof topPersona);
+
+    // Préparer les données à mettre à jour
+    const updateData = { 
+      persona_score: updatedPersonas
+    };
     
-    // Mettre à jour dans Supabase
+    // Ajouter top_persona seulement s'il est valide (non null, non undefined, non vide)
+    if (topPersona !== null && topPersona !== undefined && topPersona !== '') {
+      updateData.top_persona = String(topPersona).trim(); // S'assurer que c'est une chaîne propre
+      console.log('✅ top_persona sera enregistré:', updateData.top_persona);
+    } else {
+      console.warn('⚠️ topPersona est invalide:', topPersona, '- on ne l\'enregistre pas');
+    }
+
+    console.log('💾 Données à mettre à jour:', updateData);
+    console.log('💾 Mise à jour Supabase - ID:', candidatId);
+    
+    // Mettre à jour dans Supabase (persona_score et top_persona)
     const { data, error } = await supabase
       .from('candidats')
-      .update({ persona_score: updatedPersonas })
+      .update(updateData)
       .eq('id', candidatId)
       .select()
 
     if (error) {
       console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      console.error('❌ Code d\'erreur:', error.code);
+      console.error('❌ Message d\'erreur:', error.message);
       console.error('❌ Détails de l\'erreur:', JSON.stringify(error, null, 2));
       return { success: false, error }
     }
     
     console.log('✅ Mise à jour réussie! Données retournées:', data);
+    if (data && data[0]) {
+      console.log('✅ persona_score après mise à jour:', data[0].persona_score);
+      console.log('✅ top_persona après mise à jour:', data[0].top_persona);
+    }
     return { success: true, data }
   } catch (error) {
     console.error('❌ Erreur exception dans updatePersonaScore:', error)
