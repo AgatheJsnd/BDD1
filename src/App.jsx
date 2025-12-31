@@ -92,7 +92,7 @@ function App() {
 
   // Si le carré vert (id: 2) est cliqué, on affiche la Page Verte
   if (activePage === 2) {
-    return <PageVerte onBack={handleBack} onNext={() => setActivePage(3)} />;
+    return <PageVerte onBack={handleBack} onNext={() => setActivePage(3)} userEmail={user?.email} />;
   }
 
   // Si le carré rouge (id: 3) est cliqué, on affiche l'Évaluation Expert

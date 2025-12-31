@@ -288,3 +288,153 @@ export async function updatePersonaScore(email, personas, replace = false) {
     return { success: false, error: error.message || error }
   }
 }
+
+/**
+ * Calculer le tech_apetite à partir des réponses
+ * @param {Array<string>} techApetites - Tableau des tech_apetites (max 3)
+ * @returns {string|Array<string>} Le tech_apetite le plus fréquent, ou les 3 si tous différents
+ */
+function calculateTechApetite(techApetites) {
+  console.log('🔢 calculateTechApetite appelé avec:', techApetites);
+  
+  if (!techApetites || techApetites.length === 0) {
+    console.warn('⚠️ calculateTechApetite: Tableau vide ou null');
+    return null;
+  }
+
+  // Filtrer les valeurs valides
+  const validTechApetites = techApetites.filter(t => t && String(t).trim() !== '');
+  
+  if (validTechApetites.length === 0) {
+    console.warn('⚠️ calculateTechApetite: Aucun tech_apetite valide trouvé');
+    return null;
+  }
+
+  // Compter les occurrences
+  const counts = {};
+  validTechApetites.forEach(tech => {
+    const techStr = String(tech).trim();
+    counts[techStr] = (counts[techStr] || 0) + 1;
+  });
+
+  console.log('📊 Comptages des tech_apetites:', counts);
+
+  // Si tous les tech_apetites sont différents (3 valeurs uniques), retourner les 3
+  const uniqueValues = Object.keys(counts);
+  if (uniqueValues.length === 3) {
+    console.log('📌 3 tech_apetites différents, on retourne les 3:', validTechApetites);
+    return validTechApetites;
+  }
+
+  // Sinon, trouver le plus fréquent
+  let maxCount = 0;
+  let topTechApetite = null;
+
+  for (const [tech, count] of Object.entries(counts)) {
+    if (count > maxCount) {
+      maxCount = count;
+      topTechApetite = tech;
+    }
+  }
+
+  console.log('🔝 Tech_apetite le plus fréquent:', topTechApetite, 'avec', maxCount, 'occurrence(s)');
+  return topTechApetite;
+}
+
+/**
+ * Mettre à jour le tech_apetite d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {Array<string>} techApetites - Tableau des tech_apetites (max 3)
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateTechApetite(email, techApetites) {
+  console.log('🔧 updateTechApetite appelé avec:', { email, techApetites });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    console.log('📥 Résultat getUserByEmail:', userResult);
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        console.log('✅ Candidat créé:', newData);
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    console.log('✅ Candidat trouvé/créé avec ID:', candidatId);
+    
+    // Calculer le tech_apetite final
+    const finalTechApetite = calculateTechApetite(techApetites);
+    console.log('🏆 Tech_apetite calculé:', finalTechApetite);
+    console.log('🏆 Type de finalTechApetite:', typeof finalTechApetite, Array.isArray(finalTechApetite) ? '(Array)' : '');
+
+    // Préparer les données à mettre à jour
+    const updateData = {};
+    
+    if (finalTechApetite !== null && finalTechApetite !== undefined) {
+      // Si c'est un tableau (3 valeurs différentes), les joindre avec des virgules
+      if (Array.isArray(finalTechApetite)) {
+        updateData.tech_apetite = finalTechApetite.join(', ');
+      } else {
+        updateData.tech_apetite = String(finalTechApetite).trim();
+      }
+      console.log('✅ tech_apetite sera enregistré:', updateData.tech_apetite);
+    } else {
+      console.warn('⚠️ finalTechApetite est invalide:', finalTechApetite);
+    }
+
+    console.log('💾 Données à mettre à jour:', updateData);
+    
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update(updateData)
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      console.error('❌ Code d\'erreur:', error.code);
+      console.error('❌ Message d\'erreur:', error.message);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! Données retournées:', data);
+    if (data && data[0]) {
+      console.log('✅ tech_apetite après mise à jour:', data[0].tech_apetite);
+    }
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateTechApetite:', error)
+    console.error('❌ Stack:', error.stack);
+    return { success: false, error: error.message || error }
+  }
+}
