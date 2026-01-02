@@ -33,10 +33,12 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
       id: 1,
       question: "Travail de groupe au lycée, c'est la crise.\nQuel rôle prends-tu naturellement ?",
       options: [
-        { label: "A", text: "La passion et l'énergie" },
-        { label: "B", text: "Le calme, la confiance et la sérénité", isCorrect: true },
-        { label: "C", text: "La nature et la croissance" },
-        { label: "D", text: "Le mystère et le luxe" }
+        { label: "A", text: "Je recadre tout le monde sur l'objectif : avoir la meilleure note possible." },
+        { label: "B", text: "Je motive l'équipe et je m'occupe de la présentation orale pour vendre le truc." },
+        { label: "C", text: "Je vérifie toutes les sources et je structure le plan pour que ce soit logique." },
+        { label: "D", text: "Je fais le gros du travail technique/rédactionnel, je mets les mains dans le cambouis." },
+        { label: "E", text: "Je propose une idée complètement folle pour se démarquer des autres groupes." },
+        { label: "F", text: "Je m'occupe des slides et du visuel pour que ce soit \"Wow\"." }
       ]
     },
     {
@@ -159,7 +161,7 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
         {/* Titre */}
         {currentQuestion === 0 && (
           <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-[#2a366b]">
-            Connaissez-vous le Bleu ?
+            Test de personnalité
           </h1>
         )}
 

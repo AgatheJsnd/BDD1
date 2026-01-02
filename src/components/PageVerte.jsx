@@ -164,7 +164,7 @@ const PageVerte = ({ onBack, onComplete, userEmail }) => {
         {/* Titre */}
         {currentQuestion === 0 && (
           <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-[#3d614a]">
-            Quiz Vert
+            Appétences Techniques
           </h1>
         )}
 
