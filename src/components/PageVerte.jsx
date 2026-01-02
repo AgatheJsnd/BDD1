@@ -149,7 +149,7 @@ const PageVerte = ({ onBack, onComplete, userEmail }) => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-[#97CBB6] to-[#F2F8FD] flex items-center justify-center p-6">
+    <div className="h-screen w-screen bg-gradient-to-br from-[#97CBB6] to-[#F2F8FD] flex items-center justify-center p-4 sm:p-6">
       {/* Bouton Retour */}
       <button 
         onClick={onBack}
@@ -160,10 +160,10 @@ const PageVerte = ({ onBack, onComplete, userEmail }) => {
       </button>
 
       {/* Carte du Quiz Vert */}
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10 relative">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 sm:p-10 relative">
         {/* Titre */}
         {currentQuestion === 0 && (
-          <h1 className="text-4xl font-bold text-center mb-8 text-[#3d614a]">
+          <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-[#3d614a]">
             Quiz Vert
           </h1>
         )}

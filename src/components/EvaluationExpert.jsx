@@ -126,7 +126,7 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
   const isLastQuestion = currentQuestion === questions.length - 1;
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-[#F3E29D] to-[#FBF6E6] flex items-center justify-center p-6">
+    <div className="h-screen w-screen bg-gradient-to-br from-[#F3E29D] to-[#FBF6E6] flex items-center justify-center p-4 sm:p-6">
       {/* Bouton Retour */}
       <button 
         onClick={onBack}
@@ -137,19 +137,19 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
       </button>
 
       {/* Carte de l'évaluation */}
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 sm:p-10">
         {/* Titre - Visible uniquement sur la première question */}
         {currentQuestion === 0 && (
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-[#E0C27A] mb-2">
+            <h1 className="text-3xl sm:text-4xl font-bold text-[#d6b364] mb-2">
               Qu'est ce qui te hype ?
             </h1>
           </div>
         )}
 
         {/* Question actuelle */}
-        <div className="border-l-8 border-[#E0C27A] pl-6 mb-8">
-          <p className="text-[#E0C27A] font-bold mb-2 uppercase tracking-wider">
+        <div className="border-l-8 border-[#d6b364] pl-6 mb-8">
+          <p className="text-[#d6b364] font-bold mb-2 uppercase tracking-wider">
             QUESTION {currentQ.id} SUR {questions.length}
           </p>
           <h2 className="text-2xl font-bold text-black mb-6">
@@ -168,12 +168,12 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
                     onClick={() => handleAnswerChange(currentQ.id, option.value)}
                     className={`
                       flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left
-                      ${isSelected ? 'bg-[#E0C27A] text-white border-[#E0C27A]' : 'bg-gray-50 border-gray-200 hover:border-[#E0C27A] hover:bg-[#E0C27A]/5'}
+                      ${isSelected ? 'bg-[#d6b364] text-white border-[#d6b364]' : 'bg-gray-50 border-gray-200 hover:border-[#d6b364] hover:bg-[#d6b364]/5'}
                     `}
                   >
                     <span className={`
                       flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold
-                      ${isSelected ? 'bg-white text-[#E0C27A]' : 'bg-gray-300 text-gray-700'}
+                      ${isSelected ? 'bg-white text-[#d6b364]' : 'bg-gray-300 text-gray-700'}
                     `}>
                       {option.label}
                     </span>
@@ -191,7 +191,7 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
                 value={answers[`q${currentQ.id}`] || ''}
                 onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
                 placeholder={currentQ.placeholder}
-                className="w-full min-h-[160px] p-4 border-2 border-gray-200 rounded-xl focus:border-[#E0C27A] focus:ring-2 focus:ring-[#E0C27A]/20 focus:outline-none resize-y bg-white text-gray-900 text-base"
+                className="w-full min-h-[160px] p-4 border-2 border-gray-200 rounded-xl focus:border-[#d6b364] focus:ring-2 focus:ring-[#d6b364]/20 focus:outline-none resize-y bg-white text-gray-900 text-base"
                 autoComplete="off"
                 spellCheck="true"
                 rows={6}
@@ -208,14 +208,14 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
           {!isLastQuestion ? (
             <button
               onClick={handleNext}
-              className="px-8 py-3 bg-[#E0C27A] hover:bg-[#d4b36a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
+              className="px-8 py-3 bg-[#d6b364] hover:bg-[#c6a85c] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
             >
               Suivant →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="w-full px-8 py-4 bg-[#E0C27A] hover:bg-[#d4b36a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg"
+              className="w-full px-8 py-4 bg-[#d6b364] hover:bg-[#c6a85c] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg"
             >
               Valider mes réponses
             </button>

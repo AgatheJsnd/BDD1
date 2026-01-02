@@ -113,7 +113,7 @@ function App() {
                 fontFamily: "'Montserrat', sans-serif"
               }}
             >
-              Quelle est ton école ?
+              Tu es quel genre de profil ?
             </h1>
 
             {puzzlePieces.map((piece) => (
@@ -128,6 +128,7 @@ function App() {
                 <PuzzlePiece
                   color={piece.color}
                   blobRadius={piece.blobRadius}
+                  sizeClass="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56"
                   label={piece.label}
                   labelFill={piece.labelFill}
                   labelGlowRgb={piece.labelGlowRgb}

@@ -31,7 +31,7 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
   const questions = [
     {
       id: 1,
-      question: "Q1. Travail de groupe au lycée, c'est la crise. Quel rôle prends-tu naturellement ?",
+      question: "Travail de groupe au lycée, c'est la crise.\nQuel rôle prends-tu naturellement ?",
       options: [
         { label: "A", text: "La passion et l'énergie" },
         { label: "B", text: "Le calme, la confiance et la sérénité", isCorrect: true },
@@ -144,7 +144,7 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-[#8EC6EA] to-[#F2F8FD] flex items-center justify-center p-6">
+    <div className="h-screen w-screen bg-gradient-to-br from-[#8EC6EA] to-[#F2F8FD] flex items-center justify-center p-4 sm:p-6">
       {/* Bouton Retour */}
       <button 
         onClick={onBack}
@@ -155,10 +155,10 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
       </button>
 
       {/* Carte du Quiz Bleu */}
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10 relative">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-6 sm:p-10 relative">
         {/* Titre */}
         {currentQuestion === 0 && (
-          <h1 className="text-4xl font-bold text-center mb-8 text-[#2a366b]">
+          <h1 className="text-3xl sm:text-4xl font-bold text-center mb-8 text-[#2a366b]">
             Connaissez-vous le Bleu ?
           </h1>
         )}
@@ -210,7 +210,7 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
             onClick={handleNext}
             className="px-8 py-3 bg-[#2a366b] hover:bg-[#3a4a8a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
           >
-            {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
+            {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>
         </div>
       </div>

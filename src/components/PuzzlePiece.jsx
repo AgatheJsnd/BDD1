@@ -11,6 +11,7 @@ const PuzzlePiece = ({
   onClick,
   isClickable = false,
   isHeartbeat = false,
+  sizeClass = 'w-56 h-56', // responsive sizing
 }) => {
   const uid = useId().replace(/:/g, '');
   const glowFilterId = `numGlow-${uid}`;
@@ -48,7 +49,7 @@ const PuzzlePiece = ({
 
       {/* Tache (blob) remplie avec les couleurs à l'intérieur */}
       <div
-        className={`relative w-56 h-56 ${color} ${isHeartbeat ? 'animate-impulse' : ''}`}
+        className={`relative ${sizeClass} ${color} ${isHeartbeat ? 'animate-impulse' : ''}`}
         style={{
           borderRadius: blobRadius,
           boxShadow: '0 18px 28px rgba(0,0,0,0.18)',
