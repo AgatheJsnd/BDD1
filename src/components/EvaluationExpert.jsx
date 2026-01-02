@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { updateInterestSector, updateProudProject, updateHobbies } from '../lib/userService';
 
-const EvaluationExpert = ({ onBack, onComplete }) => {
+const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({
     q1: '',
@@ -51,8 +52,74 @@ const EvaluationExpert = ({ onBack, onComplete }) => {
     }
   };
 
-  const handleSubmit = () => {
-    onComplete(); // Ouvrir la nouvelle page après validation
+  const handleSubmit = async () => {
+    console.log('🔴 ===== VALIDATION POST-IT ROUGE =====');
+    console.log('📧 Email utilisateur:', userEmail);
+    console.log('📋 Réponses:', answers);
+
+    if (!userEmail) {
+      console.warn('⚠️ Email utilisateur non disponible');
+      // Continuer quand même pour ne pas bloquer l'utilisateur
+    }
+
+    // Sauvegarder la réponse de la question 1 (interest_sector)
+    if (answers.q1 && userEmail) {
+      console.log('💼 Sauvegarde de interest_sector:', answers.q1);
+      try {
+        const result = await updateInterestSector(userEmail, answers.q1);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Interest sector enregistré:', answers.q1);
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q1) {
+      console.warn('⚠️ Aucune réponse pour la question 1 (interest_sector)');
+    }
+
+    // Sauvegarder la réponse de la question 2 (proud_project)
+    if (answers.q2 && userEmail) {
+      console.log('📝 Sauvegarde de proud_project:', answers.q2);
+      try {
+        const result = await updateProudProject(userEmail, answers.q2);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Proud project enregistré');
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q2) {
+      console.warn('⚠️ Aucune réponse pour la question 2 (proud_project)');
+    }
+
+    // Sauvegarder la réponse de la question 3 (hobbies)
+    if (answers.q3 && userEmail) {
+      console.log('🎨 Sauvegarde de hobbies:', answers.q3);
+      try {
+        const result = await updateHobbies(userEmail, answers.q3);
+        if (result.success) {
+          console.log('✅ SUCCÈS: Hobbies enregistré');
+        } else {
+          console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+        }
+      } catch (error) {
+        console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      }
+    } else if (!answers.q3) {
+      console.warn('⚠️ Aucune réponse pour la question 3 (hobbies)');
+    }
+
+    console.log('🔴 ===== FIN VALIDATION =====');
+
+    // Attendre un peu pour s'assurer que la sauvegarde est terminée
+    const done = onComplete || onNext || onBack;
+    setTimeout(() => {
+      if (done) done(); // Priorité à onComplete si fourni (App), sinon onNext, sinon onBack
+    }, 500);
   };
 
   const currentQ = questions[currentQuestion];
@@ -74,15 +141,15 @@ const EvaluationExpert = ({ onBack, onComplete }) => {
         {/* Titre - Visible uniquement sur la première question */}
         {currentQuestion === 0 && (
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-[#6B1E2D] mb-2">
+            <h1 className="text-4xl font-bold text-[#E0C27A] mb-2">
               Qu'est ce qui te hype ?
             </h1>
           </div>
         )}
 
         {/* Question actuelle */}
-        <div className="border-l-8 border-[#6B1E2D] pl-6 mb-8">
-          <p className="text-[#6B1E2D] font-bold mb-2 uppercase tracking-wider">
+        <div className="border-l-8 border-[#E0C27A] pl-6 mb-8">
+          <p className="text-[#E0C27A] font-bold mb-2 uppercase tracking-wider">
             QUESTION {currentQ.id} SUR {questions.length}
           </p>
           <h2 className="text-2xl font-bold text-black mb-6">
@@ -101,12 +168,12 @@ const EvaluationExpert = ({ onBack, onComplete }) => {
                     onClick={() => handleAnswerChange(currentQ.id, option.value)}
                     className={`
                       flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left
-                      ${isSelected ? 'bg-[#6B1E2D] text-white border-[#6B1E2D]' : 'bg-gray-50 border-gray-200 hover:border-[#6B1E2D] hover:bg-[#6B1E2D]/5'}
+                      ${isSelected ? 'bg-[#E0C27A] text-white border-[#E0C27A]' : 'bg-gray-50 border-gray-200 hover:border-[#E0C27A] hover:bg-[#E0C27A]/5'}
                     `}
                   >
                     <span className={`
                       flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold
-                      ${isSelected ? 'bg-white text-[#6B1E2D]' : 'bg-gray-300 text-gray-700'}
+                      ${isSelected ? 'bg-white text-[#E0C27A]' : 'bg-gray-300 text-gray-700'}
                     `}>
                       {option.label}
                     </span>
@@ -124,7 +191,7 @@ const EvaluationExpert = ({ onBack, onComplete }) => {
                 value={answers[`q${currentQ.id}`] || ''}
                 onChange={(e) => handleAnswerChange(currentQ.id, e.target.value)}
                 placeholder={currentQ.placeholder}
-                className="w-full min-h-[160px] p-4 border-2 border-gray-200 rounded-xl focus:border-[#6B1E2D] focus:ring-2 focus:ring-[#6B1E2D]/20 focus:outline-none resize-y bg-white text-gray-900 text-base"
+                className="w-full min-h-[160px] p-4 border-2 border-gray-200 rounded-xl focus:border-[#E0C27A] focus:ring-2 focus:ring-[#E0C27A]/20 focus:outline-none resize-y bg-white text-gray-900 text-base"
                 autoComplete="off"
                 spellCheck="true"
                 rows={6}
@@ -141,14 +208,14 @@ const EvaluationExpert = ({ onBack, onComplete }) => {
           {!isLastQuestion ? (
             <button
               onClick={handleNext}
-              className="px-8 py-3 bg-[#6B1E2D] hover:bg-[#7A2234] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
+              className="px-8 py-3 bg-[#E0C27A] hover:bg-[#d4b36a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
             >
               Suivant →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="w-full px-8 py-4 bg-[#6B1E2D] hover:bg-[#7A2234] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg"
+              className="w-full px-8 py-4 bg-[#E0C27A] hover:bg-[#d4b36a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-lg"
             >
               Valider mes réponses
             </button>

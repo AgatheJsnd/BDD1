@@ -163,12 +163,14 @@ function App() {
               <PageVerte 
                 onBack={() => setActivePage(null)} 
                 onComplete={() => handleStepComplete(2)}
+                userEmail={user?.email}
               />
             )}
             {activePage === 3 && (
               <EvaluationExpert 
                 onBack={() => setActivePage(null)} 
                 onComplete={() => handleStepComplete(3)}
+                userEmail={user?.email}
               />
             )}
           </motion.div>

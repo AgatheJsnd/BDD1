@@ -1,9 +1,32 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
+import { updateTechApetite } from '../lib/userService';
 
-const PageVerte = ({ onBack, onComplete }) => {
+const PageVerte = ({ onBack, onComplete, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+
+  // Mapping des réponses vers les tech_apetites selon la question
+  const techApetiteMappings = {
+    1: { // Question 1
+      'A': 'Profil Data/Maths',
+      'B': 'Profil Appliqué/Ingé',
+      'C': 'Profil Littéraire/Créa',
+      'D': 'Profil Smart/Resourceful'
+    },
+    2: { // Question 2
+      'A': 'Curiosité Technique',
+      'B': 'Curiosité Business',
+      'C': 'Curiosité Créative',
+      'D': 'Détentes'
+    },
+    3: { // Question 3
+      'A': 'Dev',
+      'B': 'Analyst',
+      'C': 'Creator',
+      'D': 'Marketer'
+    }
+  };
 
   const questions = [
     {
@@ -45,12 +68,81 @@ const PageVerte = ({ onBack, onComplete }) => {
     });
   };
 
-  const handleNext = () => {
+  // Fonction pour sauvegarder toutes les réponses dans Supabase
+  const saveAllAnswersToDatabase = async () => {
+    console.log('🟢 ===== DÉBUT SAUVEGARDE POST-IT VERT =====');
+    console.log('📧 Email utilisateur:', userEmail);
+    console.log('📋 Réponses sélectionnées:', selectedAnswers);
+
+    if (!userEmail) {
+      console.error('❌ Email utilisateur non disponible');
+      return;
+    }
+
+    // Collecter tous les tech_apetites des réponses sélectionnées selon le mapping de chaque question
+    const techApetites = [];
+    questions.forEach((question) => {
+      const answerLabel = selectedAnswers[question.id];
+      console.log(`  Question ${question.id}: Réponse sélectionnée = "${answerLabel}"`);
+      if (answerLabel) {
+        // Utiliser le mapping spécifique à cette question
+        const questionMapping = techApetiteMappings[question.id];
+        if (questionMapping) {
+          const techApetite = questionMapping[answerLabel];
+          if (techApetite) {
+            techApetites.push(techApetite);
+            console.log(`    → Tech_apetite mappé: "${techApetite}"`);
+          } else {
+            console.warn(`    ⚠️ Aucun tech_apetite trouvé pour "${answerLabel}" dans le mapping de la question ${question.id}`);
+          }
+        } else {
+          console.warn(`    ⚠️ Aucun mapping trouvé pour la question ${question.id}`);
+        }
+      } else {
+        console.warn(`    ⚠️ Aucune réponse pour la question ${question.id}`);
+      }
+    });
+
+    console.log('💻 Tech_apetites finaux à sauvegarder:', techApetites);
+
+    if (techApetites.length === 0) {
+      console.error('❌ Aucune réponse à sauvegarder - ABANDON');
+      return;
+    }
+
+    try {
+      console.log('💾 Appel de updateTechApetite...');
+      const result = await updateTechApetite(userEmail, techApetites);
+      console.log('📥 Résultat reçu:', result);
+      
+      if (result.success) {
+        console.log('✅ SUCCÈS: Tech_apetite enregistré dans Supabase:', techApetites);
+        console.log('✅ Données retournées:', result.data);
+      } else {
+        console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
+      }
+      console.log('🟢 ===== FIN SAUVEGARDE =====');
+    } catch (error) {
+      console.error('❌ EXCEPTION lors de la sauvegarde:', error);
+      console.error('❌ Stack trace:', error.stack);
+    }
+  };
+
+  const handleNext = async () => {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      // Fin du quiz, aller à l'étape suivante
-      onComplete();
+      console.log('🔄 Fin du quiz vert - Début de la sauvegarde...');
+      await saveAllAnswersToDatabase();
+      console.log('🔄 Sauvegarde terminée - Passage à l\'étape suivante');
+      // Attendre un peu pour s'assurer que la sauvegarde est bien terminée
+      setTimeout(() => {
+        if (onComplete) {
+          onComplete();
+        } else {
+          onBack();
+        }
+      }, 500);
     }
   };
 
