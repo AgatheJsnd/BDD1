@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { updatePersonaScore } from '../lib/userService';
 
-const PageBleue = ({ onBack, userEmail }) => {
+const PageBleue = ({ onBack, onComplete, userEmail }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+
+  const brandColor = '#2a366b'; // Bleu un peu plus clair
+  const hoverColor = '#3a4a8a';
+
+  // ... (rest of the component)
 
   // Vérification silencieuse de l'email (logs uniquement en cas d'erreur)
   useEffect(() => {
@@ -131,7 +136,7 @@ const PageBleue = ({ onBack, userEmail }) => {
       console.log('🔄 Sauvegarde terminée - Retour au bureau');
       // Attendre un peu pour s'assurer que la sauvegarde est bien terminée
       setTimeout(() => {
-        onBack();
+        onComplete();
       }, 500);
     }
   };
@@ -139,7 +144,7 @@ const PageBleue = ({ onBack, userEmail }) => {
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-400 flex items-center justify-center p-6 animate-in fade-in duration-300">
+    <div className="h-screen w-screen bg-gradient-to-br from-[#8EC6EA] to-[#F2F8FD] flex items-center justify-center p-6">
       {/* Bouton Retour */}
       <button 
         onClick={onBack}
@@ -153,17 +158,17 @@ const PageBleue = ({ onBack, userEmail }) => {
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10 relative">
         {/* Titre */}
         {currentQuestion === 0 && (
-          <h1 className="text-4xl font-bold text-center mb-8 text-blue-900">
+          <h1 className="text-4xl font-bold text-center mb-8 text-[#2a366b]">
             Connaissez-vous le Bleu ?
           </h1>
         )}
 
         {/* Bordure bleue à gauche */}
-        <div className="border-l-8 border-blue-500 pl-6 mb-8">
-          <p className="text-blue-600 font-semibold mb-2">
+        <div className="border-l-8 border-[#2a366b] pl-6 mb-8">
+          <p className="text-[#2a366b] font-semibold mb-2 uppercase tracking-wider">
             QUESTION {currentQ.id} SUR {questions.length}
           </p>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <h2 className="text-2xl font-bold text-black mb-6">
             {currentQ.question}
           </h2>
 
@@ -179,14 +184,14 @@ const PageBleue = ({ onBack, userEmail }) => {
                   onClick={() => handleAnswerClick(currentQ.id, option.label)}
                   className={`
                     flex items-start gap-3 p-4 rounded-xl border-2 transition-all text-left
-                    ${isSelected && isCorrect ? 'bg-blue-800 text-white border-blue-900' : ''}
+                    ${isSelected && isCorrect ? 'bg-[#2a366b] text-white border-[#2a366b]' : ''}
                     ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400' : ''}
-                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-blue-500 hover:bg-blue-50' : ''}
+                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-[#2a366b] hover:bg-[#2a366b]/5' : ''}
                   `}
                 >
                   <span className={`
                     flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold
-                    ${isSelected && isCorrect ? 'bg-white text-blue-800' : ''}
+                    ${isSelected && isCorrect ? 'bg-white text-[#2a366b]' : ''}
                     ${isSelected && !isCorrect ? 'bg-gray-400 text-white' : ''}
                     ${!isSelected ? 'bg-gray-300 text-gray-700' : ''}
                   `}>
@@ -203,7 +208,7 @@ const PageBleue = ({ onBack, userEmail }) => {
         <div className="flex justify-end items-center mt-8">
           <button
             onClick={handleNext}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
+            className="px-8 py-3 bg-[#2a366b] hover:bg-[#3a4a8a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
           >
             {currentQuestion === questions.length - 1 ? 'Terminer' : 'Suivant →'}
           </button>

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
-
-  if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -15,56 +14,76 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-2xl px-8 py-12">
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.div 
+            className="bg-white/90 backdrop-blur-md w-full max-w-md rounded-2xl shadow-2xl p-8 m-4 relative"
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              duration: 0.4
+            }}
+          >
+        
         {/* Icône utilisateur centrée */}
-        <div className="flex justify-center mb-8">
-          <div className="p-6 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full border-2 border-blue-200 shadow-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="flex justify-center mb-4">
+          <div className="p-4 bg-blue-100 rounded-full border-2 border-blue-200 shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
         </div>
 
         {/* Titre */}
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
+        <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">
           Bienvenue
         </h1>
-        <p className="text-center text-gray-600 mb-8">
+        <p className="text-center text-gray-600 mb-4 text-sm">
           Veuillez remplir vos informations pour commencer
         </p>
         
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="flex gap-6">
-            <div className="space-y-2 flex-1">
-              <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700">Prénom</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="flex gap-4">
+            <div className="space-y-1.5 flex-1">
+              <label htmlFor="firstName" className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Prénom</label>
               <input
                 type="text"
                 id="firstName"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                placeholder="Votre prénom"
+                placeholder="Prénom"
                 required
-                className="w-full px-5 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white/90"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm bg-gray-50"
               />
             </div>
 
-            <div className="space-y-2 flex-1">
-              <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">Nom</label>
+            <div className="space-y-1.5 flex-1">
+              <label htmlFor="lastName" className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Nom</label>
               <input
                 type="text"
                 id="lastName"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                placeholder="Votre nom"
+                placeholder="Nom"
                 required
-                className="w-full px-5 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white/90"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm bg-gray-50"
               />
             </div>
           </div>
           
-          <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-semibold text-gray-700">Email</label>
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Email</label>
             <input
               type="email"
               id="email"
@@ -72,19 +91,21 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="votre@email.com"
               required
-              className="w-full px-5 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg bg-white/90"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm bg-gray-50"
             />
           </div>
           
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 transition duration-200 font-bold text-lg shadow-lg hover:shadow-xl transform active:scale-98 mt-8"
+            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200 font-bold text-sm shadow-md hover:shadow-lg transform active:scale-98 mt-6"
           >
             Commencer
           </button>
         </form>
-      </div>
-    </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 

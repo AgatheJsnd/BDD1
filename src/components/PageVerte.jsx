@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-const PageVerte = ({ onBack, onNext }) => {
+const PageVerte = ({ onBack, onComplete }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
@@ -50,18 +50,14 @@ const PageVerte = ({ onBack, onNext }) => {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       // Fin du quiz, aller à l'étape suivante
-      if (onNext) {
-        onNext();
-      } else {
-        onBack();
-      }
+      onComplete();
     }
   };
 
   const currentQ = questions[currentQuestion];
 
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-green-600 via-green-500 to-emerald-400 flex items-center justify-center p-6 animate-in fade-in duration-300">
+    <div className="h-screen w-screen bg-gradient-to-br from-[#97CBB6] to-[#F2F8FD] flex items-center justify-center p-6">
       {/* Bouton Retour */}
       <button 
         onClick={onBack}
@@ -75,17 +71,17 @@ const PageVerte = ({ onBack, onNext }) => {
       <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full p-10 relative">
         {/* Titre */}
         {currentQuestion === 0 && (
-          <h1 className="text-4xl font-bold text-center mb-8 text-green-900">
+          <h1 className="text-4xl font-bold text-center mb-8 text-[#3d614a]">
             Quiz Vert
           </h1>
         )}
 
         {/* Bordure verte à gauche */}
-        <div className="border-l-8 border-green-500 pl-6 mb-8">
-          <p className="text-green-600 font-semibold mb-2">
+        <div className="border-l-8 border-[#3d614a] pl-6 mb-8">
+          <p className="text-[#3d614a] font-semibold mb-2">
             QUESTION {currentQ.id} SUR {questions.length}
           </p>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <h2 className="text-2xl font-bold text-black mb-6">
             {currentQ.question}
           </h2>
 
@@ -101,14 +97,14 @@ const PageVerte = ({ onBack, onNext }) => {
                   onClick={() => handleAnswerClick(currentQ.id, option.label)}
                   className={`
                     flex items-start gap-3 p-4 rounded-xl border-2 transition-all text-left
-                    ${isSelected && isCorrect ? 'bg-green-800 text-gray-900 border-green-900' : ''}
+                    ${isSelected && isCorrect ? 'bg-[#3d614a] text-white border-[#3d614a]' : ''}
                     ${isSelected && !isCorrect ? 'bg-gray-200 border-gray-400 text-gray-900' : ''}
-                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-green-500 hover:bg-green-50 text-gray-900' : ''}
+                    ${!isSelected ? 'bg-gray-50 border-gray-200 hover:border-[#3d614a] hover:bg-[#3d614a]/5 text-gray-900' : ''}
                   `}
                 >
                   <span className={`
                     flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-bold
-                    ${isSelected && isCorrect ? 'bg-white text-green-800' : ''}
+                    ${isSelected && isCorrect ? 'bg-white text-[#3d614a]' : ''}
                     ${isSelected && !isCorrect ? 'bg-gray-400 text-white' : ''}
                     ${!isSelected ? 'bg-gray-300 text-gray-700' : ''}
                   `}>
@@ -125,7 +121,7 @@ const PageVerte = ({ onBack, onNext }) => {
         <div className="flex justify-end items-center mt-8">
           <button 
             onClick={handleNext}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
+            className="px-8 py-3 bg-[#3d614a] hover:bg-[#4d7a5a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95"
           >
             {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>
