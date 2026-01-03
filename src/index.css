@@ -16,6 +16,139 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+  /* Responsive MOBILE uniquement (≤ 480px) : n'impacte pas le desktop */
+@media (max-width: 480px) {
+  /* Autoriser le scroll si nécessaire (questions longues / petit écran) */
+  .home-root {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 0 !important; /* SUPPRIMÉ : plus de bordure grise autour du fond */
+  }
+
+  /* Titre en 2 lignes, centré */
+  .home-title {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    margin: 55px auto 30px auto !important; /* Descendu encore un tout petit peu (de 40px à 55px) */
+    font-size: 32px !important;
+    line-height: 1.12 !important;
+  }
+
+  /* Force exactement 2 lignes */
+  .home-title-line {
+    display: block !important;
+  }
+
+  /* Les 3 ronds en colonne, centrés, gap régulier */
+  .home-pieces {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 48px !important; /* Augmenté de 32px à 48px pour + d'espace entre les ronds */
+    margin-top: 100px !important; /* Descendu encore plus */
+    padding-bottom: 0 !important;
+  }
+
+  .home-piece {
+    position: relative !important; /* Changé de static à relative pour ancrer le ripple absolute */
+  }
+
+  /* Annuler le positionnement absolu + transform inline du composant */
+  .puzzle-piece {
+    position: relative !important; /* Changé de static à relative */
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+  }
+
+  /* Taille des ronds sur mobile */
+  .puzzle-piece__blob {
+    width: 155px !important;  /* Augmenté de 132px à 155px */
+    height: 155px !important;
+  }
+
+  /* --- Styles spécifiques pour les Pages Questions en Mobile --- */
+
+  /* Wrapper global des pages (Bleue, Verte, Rouge) */
+  .question-page-wrapper {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 16px !important;
+    overflow: hidden !important; /* Désactive le scroll de la page */
+  }
+
+  /* Carte de la question */
+  .question-card {
+    width: 100% !important;
+    max-height: 90dvh !important; /* Un peu plus grand si pas de scroll */
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 24px !important;
+    overflow: hidden !important; /* Pour que le contenu interne respecte le radius */
+    background: white !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    position: relative !important;
+  }
+
+  /* Contenu de la carte */
+  .question-card-content {
+    flex: 1 !important;
+    overflow: hidden !important; /* Désactive le scroll interne */
+    padding: 24px 24px 0px 24px !important; /* Bottom padding à 0 */
+  }
+
+  /* Ajustements divers en mobile */
+  .question-card h1 {
+    font-size: 1.5rem !important; /* text-2xl */
+    margin-bottom: 1.5rem !important;
+  }
+
+  .question-card h2 {
+    font-size: 1.25rem !important; /* text-xl */
+    margin-bottom: 1rem !important;
+  }
+
+  .question-card .grid {
+    gap: 0.75rem !important;
+  }
+
+  .question-card button {
+    padding: 0.75rem !important;
+  }
+
+  /* Footer de la carte (bouton Suivant) */
+  .question-card-footer {
+    padding: 4px 24px 20px 24px !important; /* Top padding réduit de 12px à 4px */
+    border-top: none !important;
+    background: transparent !important;
+  }
+
+  /* SUPPRESSION DES BORDURES GRISES AUTOUR DES RÉPONSES */
+  .question-card .grid button,
+  .question-card .grid button span {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Fond léger pour les options non sélectionnées */
+  .question-card .grid button {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
 @layer utilities {
   .animate-impulse {
     animation: impulse 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
@@ -47,11 +180,11 @@ body {
     opacity: 0.55;
   }
   60% {
-    transform: scale(1.35);
+    transform: scale(1.15); /* Réduit de 1.35 à 1.15 (-20%) */
     opacity: 0;
   }
   100% {
-    transform: scale(1.35);
+    transform: scale(1.15); /* Réduit de 1.35 à 1.15 (-20%) */
     opacity: 0;
   }
 }

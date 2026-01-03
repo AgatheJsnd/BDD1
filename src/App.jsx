@@ -116,7 +116,7 @@ function App() {
   }
 
   return (
-    <div className="relative h-screen w-screen overflow-hidden select-none">
+    <div className="relative h-screen w-screen overflow-hidden select-none home-root">
       <div className="absolute inset-0 bg-[#d3d3d3]"></div>
 
       <AnimatePresence mode="wait">
@@ -133,7 +133,7 @@ function App() {
             className="relative h-full w-full"
           >
             <h1 
-              className="absolute text-5xl font-medium text-gray-800 tracking-wide drop-shadow-md text-center w-full"
+              className="absolute text-5xl font-medium text-gray-800 tracking-wide drop-shadow-md text-center w-full home-title"
               style={{ 
                 top: '15%',
                 left: '50%', 
@@ -141,33 +141,37 @@ function App() {
                 fontFamily: "'Montserrat', sans-serif"
               }}
             >
-              Tu es quel genre de profil ?
+              <span className="home-title-line">Tu es quel genre </span>
+              <span className="home-title-line">de profil ?</span>
             </h1>
 
-            {puzzlePieces.map((piece) => (
-              <div 
-                key={piece.id} 
-                style={{ 
-                  opacity: piece.isLocked ? 0.4 : 1,
-                  filter: piece.isLocked ? 'grayscale(1) opacity(0.7)' : 'none',
-                  transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
-              >
-                <PuzzlePiece
-                  color={piece.color}
-                  blobRadius={piece.blobRadius}
-                  sizeClass="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56"
-                  label={piece.label}
-                  labelFill={piece.labelFill}
-                  labelGlowRgb={piece.labelGlowRgb}
-                  position={piece.position}
-                  rotation={piece.rotation}
-                  onClick={() => handlePieceClick(piece.id)}
-                  isClickable={!piece.isLocked}
-                  isHeartbeat={piece.isHeartbeat}
-                />
-              </div>
-            ))}
+            <div className="home-pieces">
+              {puzzlePieces.map((piece) => (
+                <div 
+                  key={piece.id}
+                  className="home-piece"
+                  style={{ 
+                    opacity: piece.isLocked ? 0.4 : 1,
+                    filter: piece.isLocked ? 'grayscale(1) opacity(0.7)' : 'none',
+                    transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                >
+                  <PuzzlePiece
+                    color={piece.color}
+                    blobRadius={piece.blobRadius}
+                    sizeClass="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56"
+                    label={piece.label}
+                    labelFill={piece.labelFill}
+                    labelGlowRgb={piece.labelGlowRgb}
+                    position={piece.position}
+                    rotation={piece.rotation}
+                    onClick={() => handlePieceClick(piece.id)}
+                    isClickable={!piece.isLocked}
+                    isHeartbeat={piece.isHeartbeat}
+                  />
+                </div>
+              ))}
+            </div>
           </motion.div>
         ) : (
           <motion.div

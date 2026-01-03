@@ -18,38 +18,39 @@ const PuzzlePiece = ({
 
   return (
     <div 
-      className={`absolute z-10 ${isClickable ? 'cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95' : ''}`}
+      className={`relative z-10 puzzle-piece ${isClickable ? 'cursor-pointer transition-transform duration-200 hover:scale-110 active:scale-95' : ''}`}
       style={{
-        top: `${position.y}px`,
-        left: `${position.x}px`,
-        transform: `translate(-50%, -50%) rotate(${rotation}deg)`,
+        position: position.x === 0 && position.y === 0 ? 'relative' : 'absolute',
+        top: position.y !== 0 ? `${position.y}px` : 'auto',
+        left: position.x !== 0 ? `${position.x}px` : 'auto',
+        transform: position.x !== 0 || position.y !== 0 ? `translate(-50%, -50%) rotate(${rotation}deg)` : `rotate(${rotation}deg)`,
       }}
       onClick={onClick}
     >
-      {/* Ondes discrètes derrière (battement) */}
+      {/* Ondes discrètes derrière (battement) - déplacées AVANT le blob pour être derrière */}
       {isHeartbeat && (
-        <>
+        <div className="absolute inset-0 pointer-events-none" style={{ zIndex: -1 }}>
           <div
-            className="absolute inset-0 animate-ripple pointer-events-none"
+            className="absolute inset-0 animate-ripple"
             style={{
               borderRadius: blobRadius,
               border: '2px solid rgba(0,0,0,0.12)',
             }}
           />
           <div
-            className="absolute inset-0 animate-ripple pointer-events-none"
+            className="absolute inset-0 animate-ripple"
             style={{
               animationDelay: '0.55s',
               borderRadius: blobRadius,
               border: '2px solid rgba(0,0,0,0.08)',
             }}
           />
-        </>
+        </div>
       )}
 
       {/* Tache (blob) remplie avec les couleurs à l'intérieur */}
       <div
-        className={`relative ${sizeClass} ${color} ${isHeartbeat ? 'animate-impulse' : ''}`}
+        className={`relative puzzle-piece__blob ${sizeClass} ${color} ${isHeartbeat ? 'animate-impulse' : ''}`}
         style={{
           borderRadius: blobRadius,
           boxShadow: '0 18px 28px rgba(0,0,0,0.18)',
@@ -70,8 +71,7 @@ const PuzzlePiece = ({
       {label != null && (
         <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${isHeartbeat ? 'animate-impulse' : ''}`}>
           <svg
-            width="160"
-            height="160"
+            className="w-full h-full p-[15%]"
             viewBox="0 0 160 160"
             style={{ overflow: 'visible' }}
             aria-hidden="true"
@@ -99,14 +99,14 @@ const PuzzlePiece = ({
 
             <text
               x="50%"
-              y="58%"
+              y="50%"
               textAnchor="middle"
-              dominantBaseline="middle"
+              dominantBaseline="central"
               fill={labelFill}
               style={{
                 fontFamily: "'Montserrat', sans-serif",
                 fontWeight: 700,
-                fontSize: 110,
+                fontSize: 100,
               }}
               filter={`url(#${glowFilterId})`}
             >
