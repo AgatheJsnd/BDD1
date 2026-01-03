@@ -16,6 +16,39 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+  /* --- Styles DESKTOP (≥ 481px) --- */
+@media (min-width: 481px) {
+  .question-page-wrapper {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .question-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 56rem;
+    width: 100%;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1rem; /* Espace réduit sur desktop */
+    border-top: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
   /* Responsive MOBILE uniquement (≤ 480px) : n'impacte pas le desktop */
 @media (max-width: 480px) {
   /* Autoriser le scroll si nécessaire (questions longues / petit écran) */
