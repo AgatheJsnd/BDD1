@@ -15,6 +15,10 @@ function App() {
   const [user, setUser] = useState(null);
   const [completedSteps, setCompletedSteps] = useState([]); // [1, 2, 3]
   const [showResults, setShowResults] = useState(false);
+  // Réponses persistées (pour retrouver les choix en revenant en arrière)
+  const [blueAnswers, setBlueAnswers] = useState({});
+  const [greenAnswers, setGreenAnswers] = useState({});
+  const [redAnswers, setRedAnswers] = useState({ q1: '', q2: '', q3: '' });
 
   // Ouvrir la modale après 1 seconde
   useEffect(() => {
@@ -181,7 +185,9 @@ function App() {
               <PageBleue 
                 onBack={() => setActivePage(null)} 
                 onComplete={() => handleStepComplete(1)}
-                userEmail={user?.email} 
+                userEmail={user?.email}
+                initialAnswers={blueAnswers}
+                onSaveAnswers={setBlueAnswers}
               />
             )}
             {activePage === 2 && (
@@ -189,6 +195,8 @@ function App() {
                 onBack={() => setActivePage(null)} 
                 onComplete={() => handleStepComplete(2)}
                 userEmail={user?.email}
+                initialAnswers={greenAnswers}
+                onSaveAnswers={setGreenAnswers}
               />
             )}
             {activePage === 3 && (
@@ -196,6 +204,8 @@ function App() {
                 onBack={() => setActivePage(null)} 
                 onComplete={() => handleStepComplete(3)}
                 userEmail={user?.email}
+                initialAnswers={redAnswers}
+                onSaveAnswers={setRedAnswers}
               />
             )}
           </motion.div>

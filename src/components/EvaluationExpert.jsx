@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { updateInterestSector, updateProudProject, updateHobbies } from '../lib/userService';
 
-const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
+const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail, initialAnswers = { q1: '', q2: '', q3: '' }, onSaveAnswers }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState({
-    q1: '',
-    q2: '',
-    q3: ''
-  });
+  const [answers, setAnswers] = useState(initialAnswers);
 
   const questions = [
     {
@@ -40,11 +36,18 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail }) => {
   ];
 
   const handleAnswerChange = (questionId, value) => {
-    setAnswers({
-      ...answers,
+    setAnswers((prev) => ({
+      ...prev,
       [`q${questionId}`]: value
-    });
+    }));
   };
+
+  // Sync answers with parent
+  useEffect(() => {
+    if (onSaveAnswers) {
+      onSaveAnswers(answers);
+    }
+  }, [answers, onSaveAnswers]);
 
   const handleNext = () => {
     if (currentQuestion < questions.length - 1) {

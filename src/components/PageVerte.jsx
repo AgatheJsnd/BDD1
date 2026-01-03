@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { updateTechApetite } from '../lib/userService';
 
-const PageVerte = ({ onBack, onComplete, userEmail }) => {
+const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveAnswers }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState(initialAnswers);
 
   // Mapping des réponses vers les tech_apetites selon la question
   const techApetiteMappings = {
@@ -62,11 +62,18 @@ const PageVerte = ({ onBack, onComplete, userEmail }) => {
   ];
 
   const handleAnswerClick = (questionId, optionLabel) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
+    setSelectedAnswers((prev) => ({
+      ...prev,
       [questionId]: optionLabel
-    });
+    }));
   };
+
+  // Sync answers with parent
+  useEffect(() => {
+    if (onSaveAnswers) {
+      onSaveAnswers(selectedAnswers);
+    }
+  }, [selectedAnswers, onSaveAnswers]);
 
   // Fonction pour sauvegarder toutes les réponses dans Supabase
   const saveAllAnswersToDatabase = async () => {

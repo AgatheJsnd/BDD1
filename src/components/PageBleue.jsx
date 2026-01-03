@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { updatePersonaScore } from '../lib/userService';
 
-const PageBleue = ({ onBack, onComplete, userEmail }) => {
+const PageBleue = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveAnswers }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [selectedAnswers, setSelectedAnswers] = useState(initialAnswers);
 
   const brandColor = '#2a366b'; // Bleu un peu plus clair
   const hoverColor = '#3a4a8a';
@@ -68,11 +68,18 @@ const PageBleue = ({ onBack, onComplete, userEmail }) => {
   ];
 
   const handleAnswerClick = (questionId, optionLabel) => {
-    setSelectedAnswers({
-      ...selectedAnswers,
+    setSelectedAnswers((prev) => ({
+      ...prev,
       [questionId]: optionLabel
-    });
+    }));
   };
+
+  // Sync answers with parent
+  useEffect(() => {
+    if (onSaveAnswers) {
+      onSaveAnswers(selectedAnswers);
+    }
+  }, [selectedAnswers, onSaveAnswers]);
 
   // Fonction pour sauvegarder toutes les réponses dans Supabase
   const saveAllAnswersToDatabase = async () => {
