@@ -8,11 +8,13 @@ import EvaluationExpert from './components/EvaluationExpert';
 import PageBleue from './components/PageBleue';
 import PageVerte from './components/PageVerte';
 import PageRouge from './components/PageRouge';
+import ResultsPage from './components/ResultsPage';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [completedSteps, setCompletedSteps] = useState([]); // [1, 2, 3]
+  const [showResults, setShowResults] = useState(false);
 
   // Ouvrir la modale après 1 seconde
   useEffect(() => {
@@ -82,10 +84,32 @@ function App() {
 
   const handleStepComplete = (stepId) => {
     if (!completedSteps.includes(stepId)) {
-      setCompletedSteps([...completedSteps, stepId]);
+      const newCompletedSteps = [...completedSteps, stepId];
+      setCompletedSteps(newCompletedSteps);
+      
+      // Si tous les 3 steps sont complétés, afficher les résultats
+      if (newCompletedSteps.length === 3) {
+        setShowResults(true);
+      } else {
+        setActivePage(null);
+      }
+    } else {
+      setActivePage(null);
     }
-    setActivePage(null);
   };
+
+  // Afficher la page de résultats si tous les steps sont complétés
+  if (showResults) {
+    return (
+      <ResultsPage 
+        userEmail={user?.email} 
+        onBack={() => {
+          setShowResults(false);
+          setActivePage(null);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none">

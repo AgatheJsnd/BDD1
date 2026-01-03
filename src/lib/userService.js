@@ -164,10 +164,10 @@ function calculateTopPersona(personas) {
 
   console.log('🔝 Persona le plus fréquent:', topPersona, 'avec', maxCount, 'occurrence(s)');
 
-  // Si tous les personas sont différents (count = 1 pour chacun), prendre le premier
-  if (maxCount === 1 && validPersonas.length > 0) {
-    topPersona = String(validPersonas[0]).trim();
-    console.log('📌 Tous les personas sont différents, on prend le premier:', topPersona);
+  // Ne retourner un persona que s'il apparaît au moins 2 fois
+  if (maxCount < 2) {
+    console.log('📌 Aucun persona n\'apparaît au moins 2 fois, on retourne null');
+    return null;
   }
 
   console.log('✅ calculateTopPersona retourne:', topPersona);
