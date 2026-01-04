@@ -36,22 +36,26 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             }}
           >
         
-        {/* Icône utilisateur centrée */}
-        <div className="flex justify-center mb-4">
-          <div className="p-4 bg-blue-100 rounded-full border-2 border-blue-200 shadow-md">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
+        {/* Icônes deux cercles qui se chevauchent */}
+        <div className="flex justify-center items-center gap-4 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 100 100">
+            {/* Grand cercle jaune moutarde */}
+            <circle cx="60" cy="50" r="35" fill="#D4AF37" />
+            {/* Petit cercle rouge foncé qui chevauche */}
+            <circle cx="30" cy="50" r="20" fill="#8B0000" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 100 100">
+            {/* Grand cercle jaune moutarde */}
+            <circle cx="60" cy="50" r="35" fill="#D4AF37" />
+            {/* Petit cercle rouge foncé qui chevauche */}
+            <circle cx="30" cy="50" r="20" fill="#8B0000" />
+          </svg>
         </div>
 
         {/* Titre */}
-        <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">
-          Bienvenue
+        <h1 className="text-sm text-center text-gray-800 mb-4">
+          Bienvenue sur le test qui va t'aider à choisir ton école
         </h1>
-        <p className="text-center text-gray-600 mb-4 text-sm">
-          Veuillez remplir vos informations pour commencer
-        </p>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="flex gap-4">
@@ -99,7 +103,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             type="submit"
             className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-200 font-bold text-sm shadow-md hover:shadow-lg transform active:scale-98 mt-6"
           >
-            Commencer
+            Je me lance
           </button>
         </form>
           </motion.div>
