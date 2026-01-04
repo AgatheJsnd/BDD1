@@ -5,11 +5,12 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
+  const [classe, setClasse] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (firstName && lastName && email) {
-      onLogin({ firstName, lastName, email });
+    if (firstName && lastName && email && classe) {
+      onLogin({ firstName, lastName, email, classe });
     }
   };
 
@@ -44,11 +45,14 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             {/* Petit cercle rouge foncé qui chevauche */}
             <circle cx="30" cy="50" r="20" fill="#8B0000" />
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 100 100">
-            {/* Grand cercle jaune moutarde */}
-            <circle cx="60" cy="50" r="35" fill="#D4AF37" />
-            {/* Petit cercle rouge foncé qui chevauche */}
-            <circle cx="30" cy="50" r="20" fill="#8B0000" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 120 140">
+            {/* Grand cercle bleu clair */}
+            <circle cx="70" cy="45" r="30" fill="#87CEEB" />
+            {/* Petit cercle bleu foncé qui chevauche */}
+            <circle cx="45" cy="45" r="18" fill="#1E3A8A" />
+            {/* Texte ALBERTSCHOOL */}
+            <text x="60" y="90" fontFamily="Arial, sans-serif" fontSize="11" fill="#1E3A8A" textAnchor="middle" fontWeight="bold">ALBERT</text>
+            <text x="60" y="105" fontFamily="Arial, sans-serif" fontSize="11" fill="#1E3A8A" textAnchor="middle">SCHOOL</text>
           </svg>
         </div>
 
@@ -97,6 +101,32 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm bg-gray-50"
             />
+          </div>
+          
+          <div className="space-y-1.5">
+            <label htmlFor="classe" className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Votre classe</label>
+            <div className="relative">
+              <select
+                id="classe"
+                value={classe}
+                onChange={(e) => setClasse(e.target.value)}
+                required
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm bg-gray-50 appearance-none"
+              >
+                <option value="">Votre classe</option>
+                <option value="Seconde">Seconde</option>
+                <option value="Première">Première</option>
+                <option value="Terminal Général">Terminal Général</option>
+                <option value="Terminal STMG">Terminal STMG</option>
+                <option value="Terminal Pro">Terminal Pro</option>
+                <option value="BTS">BTS</option>
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
+            </div>
           </div>
           
           <button
