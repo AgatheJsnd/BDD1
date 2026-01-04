@@ -192,6 +192,31 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
                             </p>
                           </div>
                         </>
+                      ) : winner === 'Eugenia School' ? (
+                        <>
+                          <div className="flex items-center gap-2">
+                            {/* Logo Eugenia School */}
+                            <div className="relative">
+                              {/* Grand cercle dégradé jaune/blanc */}
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#EBC44F] via-[#F3E29D] to-[#FBF6E6]" />
+                              {/* Petit point bordeaux à gauche */}
+                              <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-[#731024]" />
+                            </div>
+                            <div className="ml-1">
+                              <span className="text-2xl font-bold tracking-tighter text-[#731024] uppercase" style={{ fontFamily: 'Arial, sans-serif' }}>Eugenia</span>
+                              <span className="text-2xl font-normal tracking-tighter text-[#731024] uppercase ml-0.5" style={{ fontFamily: 'Arial, sans-serif' }}>School</span>
+                            </div>
+                          </div>
+                          
+                          <div className="text-center space-y-4 max-w-md">
+                            <p className="text-gray-700 text-sm leading-relaxed">
+                              Ton profil correspond davantage à Eugenia School : ton intérêt pour le business, l’innovation et les projets concrets y sera pleinement valorisé.
+                            </p>
+                            <p className="text-gray-900 font-semibold text-sm leading-relaxed">
+                              C’est une école en phase avec ton envie d’entreprendre et de construire des solutions réelles.
+                            </p>
+                          </div>
+                        </>
                       ) : (
                         <p className="text-2xl font-black tracking-tight text-gray-900">{winner}</p>
                       )}
