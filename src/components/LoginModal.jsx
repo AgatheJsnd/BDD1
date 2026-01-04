@@ -37,22 +37,27 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             }}
           >
         
-        {/* Icônes deux cercles qui se chevauchent */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 100 100">
-            {/* Grand cercle jaune moutarde */}
-            <circle cx="60" cy="50" r="35" fill="#D4AF37" />
-            {/* Petit cercle rouge foncé qui chevauche */}
-            <circle cx="30" cy="50" r="20" fill="#8B0000" />
+        {/* Deux logos design Favicon côte à côte avec les couleurs originales */}
+        <div className="flex justify-center items-center gap-8 mb-4">
+          {/* Logo Gauche (Design Favicon avec couleurs Jaune et Rouge) */}
+          <svg width="80" height="80" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20">
+            {/* Grand cercle */}
+            <circle cx="17.5" cy="16" r="13.5" fill="#D4AF37"/>
+            {/* Petit cercle : plus petit (r=4) et plus à gauche (cx=5.5) */}
+            <circle cx="5.5" cy="16" r="4" fill="#8B0000" stroke="#5a0000" stroke-width="0.5"/>
           </svg>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-20 w-20" viewBox="0 0 120 140">
-            {/* Grand cercle bleu clair */}
-            <circle cx="70" cy="45" r="30" fill="#87CEEB" />
-            {/* Petit cercle bleu foncé qui chevauche */}
-            <circle cx="45" cy="45" r="18" fill="#1E3A8A" />
-            {/* Texte ALBERTSCHOOL */}
-            <text x="60" y="90" fontFamily="Arial, sans-serif" fontSize="11" fill="#1E3A8A" textAnchor="middle" fontWeight="bold">ALBERT</text>
-            <text x="60" y="105" fontFamily="Arial, sans-serif" fontSize="11" fill="#1E3A8A" textAnchor="middle">SCHOOL</text>
+
+          {/* Croix de collaboration (feat) */}
+          <div className="text-gray-600 font-light text-4xl flex items-center justify-center pb-1">
+            ×
+          </div>
+
+          {/* Logo Droite (Design Favicon avec couleurs Bleu Clair et Bleu Foncé) */}
+          <svg width="80" height="80" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20">
+            {/* Grand cercle */}
+            <circle cx="17.5" cy="16" r="13.5" fill="#87CEEB"/>
+            {/* Petit cercle : plus petit (r=4) et plus à gauche (cx=5.5) */}
+            <circle cx="5.5" cy="16" r="4" fill="#1E3A8A" stroke="#0e1d45" stroke-width="0.5"/>
           </svg>
         </div>
 

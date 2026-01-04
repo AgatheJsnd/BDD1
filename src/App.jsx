@@ -94,6 +94,7 @@ function App() {
       // Si tous les 3 steps sont complétés, afficher les résultats
       if (newCompletedSteps.length === 3) {
         setShowResults(true);
+        setActivePage(null); // On s'assure de revenir sur le bureau pour voir l'overlay
       } else {
         setActivePage(null);
       }
@@ -101,19 +102,6 @@ function App() {
       setActivePage(null);
     }
   };
-
-  // Afficher la page de résultats si tous les steps sont complétés
-  if (showResults) {
-    return (
-      <ResultsPage 
-        userEmail={user?.email} 
-        onBack={() => {
-          setShowResults(false);
-          setActivePage(null);
-        }}
-      />
-    );
-  }
 
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none home-root">
@@ -171,6 +159,22 @@ function App() {
                   />
                 </div>
               ))}
+
+              {/* Bouton Voir mes résultats (centré par rapport aux ronds) */}
+              {completedSteps.length === 3 && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="home-results-container"
+                >
+                  <button
+                    onClick={() => setShowResults(true)}
+                    className="px-6 py-3.5 bg-gray-900/80 backdrop-blur-md text-white rounded-2xl font-bold shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 border border-white/10"
+                  >
+                    Voir mes résultats
+                  </button>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         ) : (
@@ -216,6 +220,15 @@ function App() {
         )}
       </AnimatePresence>
       
+      <ResultsPage 
+        isOpen={showResults}
+        userEmail={user?.email} 
+        onBack={() => {
+          setShowResults(false);
+          setActivePage(null);
+        }}
+      />
+
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
