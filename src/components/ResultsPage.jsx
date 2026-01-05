@@ -49,30 +49,64 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
       let albertScore = 0;
       let eugeniaScore = 0;
 
+      // Post-it bleu : Questions 1, 2, 3 - Chacune vaut 15%
       if (data.persona_score && Array.isArray(data.persona_score)) {
         data.persona_score.forEach((persona) => {
           const answer = personaToAnswer[persona];
           if (answer) {
-            if (['A', 'B', 'C'].includes(answer)) albertScore += 25;
-            else if (['D', 'E', 'F'].includes(answer)) eugeniaScore += 25;
+            // A, B, C → 15% pour Albert
+            if (['A', 'B', 'C'].includes(answer)) {
+              albertScore += 15;
+            }
+            // D, E, F → 15% pour Eugenia
+            else if (['D', 'E', 'F'].includes(answer)) {
+              eugeniaScore += 15;
+            }
           }
         });
       }
 
+      // Post-it vert : Question 1 - 27,5%
       if (data.tech_apetite) {
         const techApetites = data.tech_apetite.split(',').map(t => t.trim());
         if (techApetites.length > 0) {
           const q1TechApetite = techApetites[0];
           const answer = techApetiteQ1ToAnswer[q1TechApetite];
           if (answer) {
-            if (['A', 'B'].includes(answer)) albertScore += 25;
-            else if (['C', 'D'].includes(answer)) eugeniaScore += 25;
+            // A, B → 27,5% pour Albert
+            if (['A', 'B'].includes(answer)) {
+              albertScore += 27.5;
+            }
+            // C, D → 27,5% pour Eugenia
+            else if (['C', 'D'].includes(answer)) {
+              eugeniaScore += 27.5;
+            }
           }
         }
       }
 
-      setAlbertPercent(albertScore);
-      setEugeniaPercent(eugeniaScore);
+      // Post-it vert : Question 3 - Logique spéciale basée sur english_level
+      if (data.english_level) {
+        const englishLevel = data.english_level.trim();
+        
+        // Mapping des réponses de la question 3
+        // A) Bilingue (Niveau natif)
+        // B) Avancé (Très à l'aise)
+        // C) Intermédiaire (Je me débrouille)
+        // D) Débutant (Niveau insuffisant)
+        
+        if (englishLevel === 'Bilingue (Niveau natif)' || englishLevel === 'Avancé (Très à l\'aise)') {
+          // A ou B → 13,75% pour Albert ET 13,75% pour Eugenia
+          albertScore += 13.75;
+          eugeniaScore += 13.75;
+        } else if (englishLevel === 'Intermédiaire (Je me débrouille)' || englishLevel === 'Débutant (Niveau insuffisant)') {
+          // C ou D → 27,5% pour Eugenia ET 0% pour Albert
+          eugeniaScore += 27.5;
+        }
+      }
+
+      setAlbertPercent(Math.round(albertScore * 100) / 100); // Arrondir à 2 décimales
+      setEugeniaPercent(Math.round(eugeniaScore * 100) / 100); // Arrondir à 2 décimales
       setLoading(false);
     } catch (error) {
       console.error('Erreur lors du calcul des résultats:', error);

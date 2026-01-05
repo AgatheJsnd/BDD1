@@ -6,32 +6,66 @@ import { supabase } from './supabase'
  * @param {string} userData.firstName - Prénom
  * @param {string} userData.lastName - Nom
  * @param {string} userData.email - Email
+ * @param {string} userData.classe - Classe
  * @returns {Promise} Résultat de l'insertion
  */
 export async function saveUserData(userData) {
   try {
-    const { data, error } = await supabase
-      .from('candidats') // Utilisation de la table 'candidats'
-      .insert([
-        {
-          Prénom: userData.firstName,      // Mapping vers 'Prénom'
-          NOM: userData.lastName,           // Mapping vers 'NOM'
-          email: userData.email,
-          created_at: new Date().toISOString(),
-          // Les autres champs seront NULL ou auront leurs valeurs par défaut
-        }
-      ])
-      .select()
-
-    if (error) {
-      console.error('Erreur lors de l\'enregistrement:', error)
-      throw error
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
     }
 
-    console.log('Candidat enregistré avec succès:', data)
+    // Vérifier si le candidat existe déjà
+    const existingUser = await getUserByEmail(userData.email);
+    
+    const candidatData = {
+      Prénom: userData.firstName,      // Mapping vers 'Prénom'
+      NOM: userData.lastName,           // Mapping vers 'NOM'
+      email: userData.email,
+      classe: userData.classe || null,   // Enregistrer la classe
+      created_at: existingUser.success && existingUser.data 
+        ? existingUser.data.created_at 
+        : new Date().toISOString(),
+    };
+
+    let data, error;
+
+    if (existingUser.success && existingUser.data) {
+      // Mettre à jour le candidat existant
+      console.log('🔄 Candidat existant trouvé, mise à jour...');
+      const { data: updateData, error: updateError } = await supabase
+        .from('candidats')
+        .update(candidatData)
+        .eq('email', userData.email)
+        .select();
+      
+      data = updateData;
+      error = updateError;
+    } else {
+      // Créer un nouveau candidat
+      console.log('➕ Création d\'un nouveau candidat...');
+      const { data: insertData, error: insertError } = await supabase
+        .from('candidats')
+        .insert([candidatData])
+        .select();
+      
+      data = insertData;
+      error = insertError;
+    }
+
+    if (error) {
+      console.error('❌ Erreur lors de l\'enregistrement:', error)
+      return { success: false, error }
+    }
+
+    console.log('✅ Candidat enregistré avec succès:', data)
+    if (data && data[0]) {
+      console.log('✅ Classe enregistrée:', data[0].classe);
+    }
     return { success: true, data }
   } catch (error) {
-    console.error('Erreur:', error)
+    console.error('❌ Erreur:', error)
     return { success: false, error }
   }
 }
@@ -642,6 +676,85 @@ export async function updateEnglishLevel(email, englishLevel) {
     return { success: true, data }
   } catch (error) {
     console.error('❌ Erreur exception dans updateEnglishLevel:', error)
+    console.error('❌ Stack:', error.stack);
+    return { success: false, error: error.message || error }
+  }
+}
+
+/**
+ * Mettre à jour la classe d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {string} classe - La classe du candidat
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateClasse(email, classe) {
+  console.log('🔧 updateClasse appelé avec:', { email, classe });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    console.log('📥 Résultat getUserByEmail:', userResult);
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, classe: classe || null, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        console.log('✅ Candidat créé:', newData);
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    console.log('✅ Candidat trouvé/créé avec ID:', candidatId);
+    
+    const classeValue = classe ? String(classe).trim() : null;
+    console.log('🏫 Classe à enregistrer:', classeValue);
+
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ classe: classeValue })
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      console.error('❌ Code d\'erreur:', error.code);
+      console.error('❌ Message d\'erreur:', error.message);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! Données retournées:', data);
+    if (data && data[0]) {
+      console.log('✅ classe après mise à jour:', data[0].classe);
+    }
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateClasse:', error)
     console.error('❌ Stack:', error.stack);
     return { success: false, error: error.message || error }
   }
