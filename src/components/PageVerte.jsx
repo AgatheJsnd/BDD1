@@ -31,22 +31,22 @@ const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
   const questions = [
     {
       id: 1,
-      question: "Quand tu dois résoudre un problème de maths complexe :",
+      question: "Face à un problème de maths complexe, tu réagis comment ?",
       options: [
-        { label: "A", text: "J'adore, c'est comme un puzzle logique." },
-        { label: "B", text: "Je le fais, mais je préfère quand on voit à quoi ça sert concrètement (physique/éco)." },
-        { label: "C", text: "Je galère, je préfère rédiger une dissert ou apprendre une langue." },
-        { label: "D", text: "Je cherche une calculatrice ou une IA pour le faire à ma place." }
+        { label: "A", text: "J’aime résoudre des problèmes logiques" },
+        { label: "B", text: "Je le fais, mais je préfère quand on voit à quoi ça sert concrètement" },
+        { label: "C", text: "Je galère vite et j’abandonne" },
+        { label: "D", text: "Je cherche une calculatrice ou une IA pour le faire à ma place" }
       ]
     },
     {
       id: 2,
-      question: "Ton feed TikTok/Insta/YouTube, c'est surtout :",
+      question: "Ton feed TikTok / Insta / YouTube, c’est surtout..",
       options: [
-        { label: "A", text: "Des tutos, de la science, des \"How it's made\"." },
-        { label: "B", text: "Des entrepreneurs, de la motivation, de l'actu éco." },
-        { label: "C", text: "De l'art, du design, des concepts visuels, du montage." },
-        { label: "D", text: "Du divertissement pur, du gaming, des memes." }
+        { label: "A", text: "Des tutos, de la science, des \"How it's made\"" },
+        { label: "B", text: "Des entrepreneurs, de la motivation, de l'actu éco" },
+        { label: "C", text: "De l'art, du design, des concepts visuels, du montage" },
+        { label: "D", text: "Du divertissement pur, du gaming, des memes" }
       ]
     },
     {

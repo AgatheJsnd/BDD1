@@ -30,9 +30,9 @@ const Quiz = ({ onBack, onNext }) => {
       id: 3,
       question: 'Parmi les propositions suivantes, laquelle décrit le mieux le style "Art Déco" ?',
       options: [
-        { label: "A", text: "Un style caractérisé par des formes organiques, des courbes inspirées de la nature et des motifs floraux complexes." },
-        { label: "B", text: "Un mouvement artistique basé sur l'utilisation exclusive de couleurs primaires et de formes géométriques très simples." },
-        { label: "C", text: "Un style utilisant des formes géométriques épurées, des lignes droites, des matériaux luxueux et des couleurs riches comme l'or.", isCorrect: true }
+        { label: "A", text: "Un style caractérisé par des formes organiques, des courbes inspirées de la nature et des motifs floraux complexes" },
+        { label: "B", text: "Un mouvement artistique basé sur l'utilisation exclusive de couleurs primaires et de formes géométriques très simples" },
+        { label: "C", text: "Un style utilisant des formes géométriques épurées, des lignes droites, des matériaux luxueux et des couleurs riches comme l'or", isCorrect: true }
       ]
     }
   ];

@@ -33,36 +33,36 @@ const PageBleue = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
       id: 1,
       question: "Travail de groupe au lycée, c'est la crise.\nQuel rôle prends-tu naturellement ?",
       options: [
-        { label: "A", text: "Je recadre tout le monde sur l'objectif : avoir la meilleure note possible." },
-        { label: "B", text: "Je motive l'équipe et je m'occupe de la présentation orale pour vendre le truc." },
-        { label: "C", text: "Je vérifie toutes les sources et je structure le plan pour que ce soit logique." },
-        { label: "D", text: "Je fais le gros du travail technique/rédactionnel, je mets les mains dans le cambouis." },
-        { label: "E", text: "Je propose une idée complètement folle pour se démarquer des autres groupes." },
-        { label: "F", text: "Je m'occupe des slides et du visuel pour que ce soit \"Wow\"." }
+        { label: "A", text: "Je prends naturellement le rôle de leader et je donne la direction au groupe" },
+        { label: "B", text: "Je motive le groupe et je fais la présentation orale" },
+        { label: "C", text: "Je vérifie les infos et j’organise le plan" },
+        { label: "D", text: "Je fais surtout le travail technique ou écrit" },
+        { label: "E", text: "Je propose une idée originale pour se démarquer" },
+        { label: "F", text: "Je m’occupe du design et des slides" }
       ]
     },
     {
       id: 2,
       question: "On te donne 1 million d'euros pour lancer un projet. Tu fais quoi ?",
       options: [
-        { label: "A", text: "J'investis en bourse et crypto pour en faire 10 millions." },
-        { label: "B", text: "Je lance une marque e-commerce et j'inonde les réseaux sociaux de pubs." },
-        { label: "C", text: "Je crée une agence d'analyse pour prédire les tendances futures." },
-        { label: "D", text: "Je finance un labo de recherche pour développer une nouvelle technologie." },
-        { label: "E", text: "Je monte une startup type \"SpaceX\" pour résoudre un problème mondial." },
-        { label: "F", text: "Je produis un film ou un jeu vidéo ultra immersif nouvelle génération." }
+        { label: "A", text: "J'investis en bourse et crypto pour en faire 10 millions" },
+        { label: "B", text: "Je lance une marque e-commerce et j'inonde les réseaux sociaux de pubs" },
+        { label: "C", text: "Je crée une agence d'analyse pour prédire les tendances futures" },
+        { label: "D", text: "Je finance un labo de recherche pour développer une nouvelle technologie" },
+        { label: "E", text: "Je monte une startup type \"SpaceX\" pour résoudre un problème mondial" },
+        { label: "F", text: "Je produis un film ou un jeu vidéo ultra immersif nouvelle génération" }
       ]
     },
     {
       id: 3,
       question: "Ce qui t'énerve le plus dans le monde actuel ?",
       options: [
-        { label: "A", text: "Les gens qui perdent de l'argent bêtement." },
-        { label: "B", text: "Les produits nuls qui se vendent juste parce qu'ils ont du bon marketing." },
-        { label: "C", text: "Les fake news et les gens qui parlent sans vérifier les chiffres." },
-        { label: "D", text: "Les sites web qui buggent et les technos mal conçues." },
-        { label: "E", text: "Le manque d'ambition et le \"c'était mieux avant\"." },
-        { label: "F", text: "La laideur des villes et le manque de créativité." }
+        { label: "A", text: "Les gens qui perdent de l'argent bêtement" },
+        { label: "B", text: "Les produits nuls qui se vendent juste parce qu'ils ont du bon marketing" },
+        { label: "C", text: "Les fake news et les gens qui parlent sans vérifier les chiffres" },
+        { label: "D", text: "Les sites web qui buggent et les technos mal conçues" },
+        { label: "E", text: "Le manque d'ambition et le \"c'était mieux avant\"" },
+        { label: "F", text: "La laideur des villes et le manque de créativité" }
       ]
     }
   ];

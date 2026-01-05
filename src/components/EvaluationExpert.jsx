@@ -24,13 +24,13 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail, initialAnswer
     {
       id: 2,
       type: 'text',
-      question: 'Raconte-nous quelque chose dont tu es fier(e) (Projet perso, sport, asso, réussite scolaire...) :',
+      question: 'Parle-nous d’un projet ou d’un succès personnel.',
       placeholder: 'Tapez votre réponse ici...'
     },
     {
       id: 3,
       type: 'text',
-      question: 'Qu\'est-ce que tu fais de ton temps libre quand tu n\'as plus de batterie sur ton tel ? (Passions/Hobby)',
+      question: 'Quelles sont tes passions ou hobbies ?',
       placeholder: 'Tapez votre réponse ici...'
     }
   ];
