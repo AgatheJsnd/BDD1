@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { updateTechApetite } from '../lib/userService';
+import { updateTechApetite, updateEnglishLevel } from '../lib/userService';
 
 const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveAnswers }) => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -51,12 +51,12 @@ const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
     },
     {
       id: 3,
-      question: "Si tu devais apprendre un \"super-pouvoir\" informatique demain :",
+      question: "Comment estimes-tu ton niveau en anglais.",
       options: [
-        { label: "A", text: "Parler couramment Python pour contrôler les machines." },
-        { label: "B", text: "Maîtriser Excel pour analyser n'importe quelle situation en 2 secondes." },
-        { label: "C", text: "Maîtriser Photoshop/Blender pour créer tout ce que j'imagine." },
-        { label: "D", text: "Savoir hacker les algorithmes des réseaux sociaux pour devenir viral." }
+        { label: "A", text: "Bilingue (Niveau natif)" },
+        { label: "B", text: "Avancé (Très à l'aise)" },
+        { label: "C", text: "Intermédiaire (Je me débrouille)" },
+        { label: "D", text: "Débutant (Niveau insuffisant)" }
       ]
     }
   ];
@@ -128,6 +128,26 @@ const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
       } else {
         console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement:', result.error);
       }
+
+      // Sauvegarder le niveau d'anglais (question 3) dans english_level
+      const q3Answer = selectedAnswers[3];
+      if (q3Answer) {
+        const q3Question = questions.find(q => q.id === 3);
+        if (q3Question) {
+          const q3Option = q3Question.options.find(opt => opt.label === q3Answer);
+          if (q3Option) {
+            const englishLevelText = q3Option.text; // Ex: "Bilingue (Niveau natif)"
+            console.log('🌐 Sauvegarde du niveau d\'anglais:', englishLevelText);
+            const englishResult = await updateEnglishLevel(userEmail, englishLevelText);
+            if (englishResult.success) {
+              console.log('✅ SUCCÈS: English level enregistré dans Supabase:', englishLevelText);
+            } else {
+              console.error('❌ ÉCHEC: Erreur lors de l\'enregistrement du niveau d\'anglais:', englishResult.error);
+            }
+          }
+        }
+      }
+
       console.log('🟢 ===== FIN SAUVEGARDE =====');
     } catch (error) {
       console.error('❌ EXCEPTION lors de la sauvegarde:', error);

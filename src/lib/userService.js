@@ -564,6 +564,90 @@ export async function updateProudProject(email, proudProject) {
 }
 
 /**
+ * Mettre à jour le english_level d'un candidat par email
+ * @param {string} email - L'email du candidat
+ * @param {string} englishLevel - Le niveau d'anglais sélectionné
+ * @returns {Promise} Résultat de la mise à jour
+ */
+export async function updateEnglishLevel(email, englishLevel) {
+  console.log('🔧 updateEnglishLevel appelé avec:', { email, englishLevel });
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    if (!email) {
+      console.error('❌ Email manquant')
+      return { success: false, error: 'Email manquant' }
+    }
+
+    if (!englishLevel || englishLevel.trim() === '') {
+      console.warn('⚠️ English level vide ou invalide')
+      return { success: false, error: 'English level manquant' }
+    }
+
+    console.log('🔍 Recherche du candidat avec email:', email);
+    let userResult = await getUserByEmail(email)
+    console.log('📥 Résultat getUserByEmail:', userResult);
+    
+    // Si le candidat n'existe pas, essayer de le créer
+    if (!userResult.success || !userResult.data) {
+      console.log('⚠️ Candidat non trouvé, création...');
+      try {
+        const { data: newData, error: insertError } = await supabase
+          .from('candidats')
+          .insert([{ email: email, created_at: new Date().toISOString() }])
+          .select()
+          .single()
+
+        if (insertError) {
+          console.error('❌ Erreur lors de la création du candidat:', insertError)
+          return { success: false, error: `Candidat non trouvé et impossible de le créer: ${insertError.message}` }
+        }
+
+        console.log('✅ Candidat créé:', newData);
+        userResult = { success: true, data: newData }
+      } catch (createError) {
+        console.error('❌ Erreur lors de la création:', createError)
+        return { success: false, error: `Candidat non trouvé et erreur de création: ${createError.message}` }
+      }
+    }
+
+    const candidatId = userResult.data.id
+    console.log('✅ Candidat trouvé/créé avec ID:', candidatId);
+    
+    const englishLevelValue = String(englishLevel).trim();
+    console.log('🌐 English level à enregistrer:', englishLevelValue);
+
+    // Mettre à jour dans Supabase
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ english_level: englishLevelValue })
+      .eq('id', candidatId)
+      .select()
+
+    if (error) {
+      console.error('❌ Erreur Supabase lors de la mise à jour:', error);
+      console.error('❌ Code d\'erreur:', error.code);
+      console.error('❌ Message d\'erreur:', error.message);
+      return { success: false, error }
+    }
+    
+    console.log('✅ Mise à jour réussie! Données retournées:', data);
+    if (data && data[0]) {
+      console.log('✅ english_level après mise à jour:', data[0].english_level);
+    }
+    return { success: true, data }
+  } catch (error) {
+    console.error('❌ Erreur exception dans updateEnglishLevel:', error)
+    console.error('❌ Stack:', error.stack);
+    return { success: false, error: error.message || error }
+  }
+}
+
+/**
  * Mettre à jour le hobbies d'un candidat par email
  * @param {string} email - L'email du candidat
  * @param {string} hobbies - Le texte des hobbies/passions
