@@ -125,6 +125,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 <option value="Terminal STMG">Terminal STMG</option>
                 <option value="Terminal Pro">Terminal Pro</option>
                 <option value="BTS">BTS</option>
+                <option value="Bac+3">Bac+3</option>
               </select>
               <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                 <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
