@@ -105,10 +105,57 @@ function App() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none home-root">
-      <div className="absolute inset-0 bg-[#d3d3d3]"></div>
+      {/* Fond conditionnel : Image pendant le login ou les résultats, Gris sinon */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
+        style={{ 
+          backgroundImage: (isLoginModalOpen || showResults) ? "url('/background.png')" : "none",
+          backgroundColor: (isLoginModalOpen || showResults) ? "transparent" : "#d3d3d3"
+        }}
+      ></div>
 
       <AnimatePresence mode="wait">
-        {activePage === null ? (
+        {activePage !== null ? (
+          <motion.div
+            key="page"
+            initial={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
+            transition={{ 
+              duration: 0.8, 
+              ease: [0.4, 0, 0.2, 1] 
+            }}
+            className="relative z-50 h-full w-full"
+          >
+            {activePage === 1 && (
+              <PageBleue 
+                onBack={() => setActivePage(null)} 
+                onComplete={() => handleStepComplete(1)}
+                userEmail={user?.email}
+                initialAnswers={blueAnswers}
+                onSaveAnswers={setBlueAnswers}
+              />
+            )}
+            {activePage === 2 && (
+              <PageVerte 
+                onBack={() => setActivePage(null)} 
+                onComplete={() => handleStepComplete(2)}
+                userEmail={user?.email}
+                initialAnswers={greenAnswers}
+                onSaveAnswers={setGreenAnswers}
+              />
+            )}
+            {activePage === 3 && (
+              <EvaluationExpert 
+                onBack={() => setActivePage(null)} 
+                onComplete={() => handleStepComplete(3)}
+                userEmail={user?.email}
+                initialAnswers={redAnswers}
+                onSaveAnswers={setRedAnswers}
+              />
+            )}
+          </motion.div>
+        ) : (!isLoginModalOpen && !showResults) ? (
           <motion.div
             key="desktop"
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
@@ -177,47 +224,7 @@ function App() {
               )}
             </div>
           </motion.div>
-        ) : (
-          <motion.div
-            key="page"
-            initial={{ opacity: 0, scale: 1.1, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
-            transition={{ 
-              duration: 0.8, 
-              ease: [0.4, 0, 0.2, 1] 
-            }}
-            className="relative z-50 h-full w-full"
-          >
-            {activePage === 1 && (
-              <PageBleue 
-                onBack={() => setActivePage(null)} 
-                onComplete={() => handleStepComplete(1)}
-                userEmail={user?.email}
-                initialAnswers={blueAnswers}
-                onSaveAnswers={setBlueAnswers}
-              />
-            )}
-            {activePage === 2 && (
-              <PageVerte 
-                onBack={() => setActivePage(null)} 
-                onComplete={() => handleStepComplete(2)}
-                userEmail={user?.email}
-                initialAnswers={greenAnswers}
-                onSaveAnswers={setGreenAnswers}
-              />
-            )}
-            {activePage === 3 && (
-              <EvaluationExpert 
-                onBack={() => setActivePage(null)} 
-                onComplete={() => handleStepComplete(3)}
-                userEmail={user?.email}
-                initialAnswers={redAnswers}
-                onSaveAnswers={setRedAnswers}
-              />
-            )}
-          </motion.div>
-        )}
+        ) : null}
       </AnimatePresence>
       
       <ResultsPage 

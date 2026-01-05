@@ -198,7 +198,7 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
                             {/* Logo Eugenia School */}
                             <div className="relative">
                               {/* Grand cercle dégradé jaune/blanc */}
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#EBC44F] via-[#F3E29D] to-[#FBF6E6]" />
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F2E08A] to-[#FBF6E6]" />
                               {/* Petit point bordeaux à gauche */}
                               <div className="absolute left-[-4px] top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-[#731024]" />
                             </div>
