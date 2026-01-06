@@ -14,6 +14,7 @@ import ResultLoader from './components/ResultLoader';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [user, setUser] = useState(null);
   const [completedSteps, setCompletedSteps] = useState([]); // [1, 2, 3]
   const [showResults, setShowResults] = useState(false);
@@ -65,10 +66,12 @@ function App() {
       setShowResumeNotification(true);
       // S'assurer que le modal de connexion est fermé
       setIsLoginModalOpen(false);
+      setIsInitialLoading(false);
     } else {
       // Ouvrir la modale après 1 seconde seulement si pas de quiz en cours
       const timer = setTimeout(() => {
         setIsLoginModalOpen(true);
+        setIsInitialLoading(false);
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -330,7 +333,7 @@ function App() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
         style={{ 
-          backgroundImage: (isLoginModalOpen || isLoadingResults || showResults) 
+          backgroundImage: (isLoginModalOpen || isLoadingResults || showResults || isInitialLoading) 
             ? "url('/background.png')" 
             : "url('/background_n&b.png')",
           backgroundColor: "transparent"
@@ -378,7 +381,7 @@ function App() {
               />
             )}
           </motion.div>
-        ) : (!isLoginModalOpen && !showResults && !isLoadingResults) ? (
+        ) : (!isLoginModalOpen && !showResults && !isLoadingResults && !isInitialLoading) ? (
           <motion.div
             key="desktop"
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
