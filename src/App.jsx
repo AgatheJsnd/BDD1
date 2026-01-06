@@ -263,11 +263,11 @@ function App() {
   const puzzlePieces = [
     { 
       id: 1,
-      color: 'bg-gradient-to-br from-[#8EC6EA] to-[#F2F8FD]',
+      color: 'bg-gradient-to-br from-[#5DA9E9] to-[#D4EAF7]',
       blobRadius: '50%',
       label: 1,
       labelFill: '#eaf7ff',
-      labelGlowRgb: '142,198,234',
+      labelGlowRgb: '93,169,233',
       position: { x: window.innerWidth * 0.25, y: window.innerHeight * 0.5 },
       rotation: 0,
       isHeartbeat: currentStep === 1,
@@ -275,11 +275,11 @@ function App() {
     },
     { 
       id: 2,
-      color: 'bg-gradient-to-br from-[#97CBB6] to-[#F2F8FD]',
+      color: 'bg-gradient-to-br from-[#74B49B] to-[#D4E7D0]',
       blobRadius: '50%',
       label: 2,
       labelFill: '#f0ffe6',
-      labelGlowRgb: '151,203,182',
+      labelGlowRgb: '116,180,155',
       position: { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 },
       rotation: 0,
       isHeartbeat: currentStep === 2,
@@ -287,11 +287,11 @@ function App() {
     },
     { 
       id: 3,
-      color: 'bg-gradient-to-br from-[#F3E29D] to-[#FBF6E6]',
+      color: 'bg-gradient-to-br from-[#F0D878] to-[#F9F3D2]',
       blobRadius: '50%',
       label: 3,
       labelFill: '#fff0f0',
-      labelGlowRgb: '243,226,157',
+      labelGlowRgb: '240,216,120',
       position: { x: window.innerWidth * 0.75, y: window.innerHeight * 0.5 },
       rotation: 0,
       isHeartbeat: currentStep === 3,
@@ -333,9 +333,9 @@ function App() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
         style={{ 
-          backgroundImage: (isLoginModalOpen || isLoadingResults || showResults || isInitialLoading) 
-            ? "url('/background.png')" 
-            : "url('/background_n&b.png')",
+            backgroundImage: ((isLoginModalOpen && !showResumeNotification) || isLoadingResults || showResults || isInitialLoading) 
+              ? "url('/background.png')" 
+              : "url('/background_n&b.png')",
           backgroundColor: "transparent"
         }}
       ></div>
@@ -381,7 +381,7 @@ function App() {
               />
             )}
           </motion.div>
-        ) : (!isLoginModalOpen && !showResults && !isLoadingResults && !isInitialLoading) ? (
+        ) : ((!isLoginModalOpen || showResumeNotification) && !showResults && !isLoadingResults && !isInitialLoading) ? (
           <motion.div
             key="desktop"
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
@@ -473,7 +473,7 @@ function App() {
       </AnimatePresence>
 
       <LoginModal 
-        isOpen={isLoginModalOpen} 
+        isOpen={isLoginModalOpen && !showResumeNotification} 
         onClose={() => setIsLoginModalOpen(false)} 
         onLogin={handleLogin}
       />
