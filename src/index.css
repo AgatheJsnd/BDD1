@@ -1,0 +1,262 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Cacher le curseur sur les boutons avec effet magnétique */
+.puzzle-piece-hover {
+  cursor: pointer;
+}
+
+  /* --- Styles DESKTOP (≥ 481px) --- */
+@media (min-width: 481px) {
+  .home-results-container {
+    position: absolute !important;
+    bottom: 40px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 30 !important;
+  }
+  
+  .question-page-wrapper {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .question-card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 56rem;
+    width: 100%;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .question-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1rem; /* Espace réduit sur desktop */
+    border-top: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+}
+
+  /* Responsive MOBILE uniquement (≤ 480px) : n'impacte pas le desktop */
+@media (max-width: 480px) {
+  /* Autoriser le scroll si nécessaire (questions longues / petit écran) */
+  .home-root {
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 0 !important; /* SUPPRIMÉ : plus de bordure grise autour du fond */
+  }
+
+  /* Titre en 2 lignes, centré */
+  .home-title {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    margin: 55px auto 30px auto !important; /* Descendu encore un tout petit peu (de 40px à 55px) */
+    font-size: 32px !important;
+    line-height: 1.12 !important;
+  }
+
+  /* Force exactement 2 lignes */
+  .home-title-line {
+    display: block !important;
+  }
+
+  /* Les 3 ronds en colonne, centrés, gap régulier */
+  .home-pieces {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 48px !important; /* Augmenté de 32px à 48px pour + d'espace entre les ronds */
+    margin-top: 100px !important; /* Descendu encore plus */
+    padding-bottom: 0 !important;
+  }
+
+  .home-piece {
+    position: relative !important; /* Changé de static à relative pour ancrer le ripple absolute */
+  }
+
+  /* Annuler le positionnement absolu + transform inline du composant */
+  .puzzle-piece {
+    position: relative !important; /* Changé de static à relative */
+    top: auto !important;
+    left: auto !important;
+    transform: none !important;
+  }
+
+  /* Taille des ronds sur mobile */
+  .puzzle-piece__blob {
+    width: 155px !important;  /* Augmenté de 132px à 155px */
+    height: 155px !important;
+  }
+
+  /* Centrage du bouton résultats par rapport aux ronds sur mobile */
+  .home-results-container {
+    margin-top: 20px !important;
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+  }
+
+  /* --- Styles spécifiques pour les Pages Questions en Mobile --- */
+
+  /* Wrapper global des pages (Bleue, Verte, Rouge) */
+  .question-page-wrapper {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 16px !important;
+    overflow: hidden !important; /* Désactive le scroll de la page */
+  }
+
+  /* Carte de la question */
+  .question-card {
+    width: 100% !important;
+    max-height: 90dvh !important; /* Un peu plus grand si pas de scroll */
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 24px !important;
+    overflow: hidden !important; /* Pour que le contenu interne respecte le radius */
+    background: white !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+    position: relative !important;
+  }
+
+  /* Contenu de la carte */
+  .question-card-content {
+    flex: 1 !important;
+    overflow: hidden !important; /* Désactive le scroll interne */
+    padding: 24px 24px 0px 24px !important; /* Bottom padding à 0 */
+  }
+
+  /* Ajustements divers en mobile */
+  .question-card h1 {
+    font-size: 1.5rem !important; /* text-2xl */
+    margin-bottom: 1.5rem !important;
+  }
+
+  .question-card h2 {
+    font-size: 1.25rem !important; /* text-xl */
+    margin-bottom: 1rem !important;
+  }
+
+  .question-card .grid {
+    gap: 0.75rem !important;
+  }
+
+  .question-card button {
+    padding: 0.75rem !important;
+  }
+
+  /* Footer de la carte (bouton Suivant) */
+  .question-card-footer {
+    padding: 4px 24px 20px 24px !important; /* Top padding réduit de 12px à 4px */
+    border-top: none !important;
+    background: transparent !important;
+  }
+
+  /* SUPPRESSION DES BORDURES GRISES AUTOUR DES RÉPONSES */
+  .question-card .grid button,
+  .question-card .grid button span {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Fond léger pour les options non sélectionnées */
+  .question-card .grid button {
+    background-color: rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+@layer utilities {
+  .animate-impulse {
+    animation: impulse 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform;
+  }
+
+  .animate-ripple {
+    animation: ripple 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    will-change: transform, opacity;
+  }
+}
+
+@keyframes impulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.05);
+  }
+  55% {
+    transform: scale(1.015);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  60% {
+    transform: scale(1.15); /* Réduit de 1.35 à 1.15 (-20%) */
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.15); /* Réduit de 1.35 à 1.15 (-20%) */
+    opacity: 0;
+  }
+}
+
+/* Effet hover élégant pour les cercles avec glassmorphism - SANS mouvement de position */
+.puzzle-piece-hover {
+  cursor: pointer;
+  will-change: transform;
+}
+
+/* Effet de glow sur le blob au hover - SANS mouvement */
+.puzzle-piece-hover:hover .puzzle-piece__blob {
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25),
+              0 12px 24px var(--glow-color, rgba(142, 198, 234, 0.5)),
+              0 6px 12px var(--glow-color, rgba(142, 198, 234, 0.3)),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6),
+              inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  transition: box-shadow 0.3s ease-out, border 0.3s ease-out;
+}
+
