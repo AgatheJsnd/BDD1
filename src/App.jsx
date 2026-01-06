@@ -333,9 +333,9 @@ function App() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
         style={{ 
-          backgroundImage: (isLoginModalOpen || isLoadingResults || showResults || isInitialLoading) 
-            ? "url('/background.png')" 
-            : "url('/background_n&b.png')",
+            backgroundImage: ((isLoginModalOpen && !showResumeNotification) || isLoadingResults || showResults || isInitialLoading) 
+              ? "url('/background.png')" 
+              : "url('/background_n&b.png')",
           backgroundColor: "transparent"
         }}
       ></div>
@@ -381,7 +381,7 @@ function App() {
               />
             )}
           </motion.div>
-        ) : (!isLoginModalOpen && !showResults && !isLoadingResults && !isInitialLoading) ? (
+        ) : ((!isLoginModalOpen || showResumeNotification) && !showResults && !isLoadingResults && !isInitialLoading) ? (
           <motion.div
             key="desktop"
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
@@ -473,7 +473,7 @@ function App() {
       </AnimatePresence>
 
       <LoginModal 
-        isOpen={isLoginModalOpen} 
+        isOpen={isLoginModalOpen && !showResumeNotification} 
         onClose={() => setIsLoginModalOpen(false)} 
         onLogin={handleLogin}
       />
