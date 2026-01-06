@@ -184,12 +184,7 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
             </button>
 
             <div className="overflow-y-auto p-8 sm:p-10 pt-20 flex-1">
-              {loading ? (
-                <div className="flex flex-col items-center justify-center py-20">
-                  <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mb-4"></div>
-                  <p className="text-xl font-medium text-gray-600">Génération de ton profil...</p>
-                </div>
-              ) : (
+              {!loading && (
                 <div className="space-y-8">
                   <h1 
                     className="text-3xl sm:text-4xl font-medium text-gray-800 tracking-wide drop-shadow-md text-center mb-8"
