@@ -10,12 +10,14 @@ import PageBleue from './components/PageBleue';
 import PageVerte from './components/PageVerte';
 import PageRouge from './components/PageRouge';
 import ResultsPage from './components/ResultsPage';
+import ResultLoader from './components/ResultLoader';
 
 function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [completedSteps, setCompletedSteps] = useState([]); // [1, 2, 3]
   const [showResults, setShowResults] = useState(false);
+  const [isLoadingResults, setIsLoadingResults] = useState(false);
   const [showResumeNotification, setShowResumeNotification] = useState(false);
   // Réponses persistées (pour retrouver les choix en revenant en arrière)
   const [blueAnswers, setBlueAnswers] = useState({});
@@ -306,10 +308,14 @@ function App() {
       const newCompletedSteps = [...completedSteps, stepId];
       setCompletedSteps(newCompletedSteps);
       
-      // Si tous les 3 steps sont complétés, afficher les résultats
+      // Si tous les 3 steps sont complétés, afficher le loader puis les résultats
       if (newCompletedSteps.length === 3) {
-        setShowResults(true);
-        setActivePage(null); // On s'assure de revenir sur le bureau pour voir l'overlay
+        setIsLoadingResults(true);
+        setActivePage(null);
+        setTimeout(() => {
+          setIsLoadingResults(false);
+          setShowResults(true);
+        }, 3000);
       } else {
         setActivePage(null);
       }
@@ -320,12 +326,14 @@ function App() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden select-none home-root">
-      {/* Fond conditionnel : Image pendant le login ou les résultats, Gris sinon */}
+      {/* Fond conditionnel : Image pendant le login, le loader ou les résultats, Autre image pour le bureau */}
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-all duration-700" 
         style={{ 
-          backgroundImage: (isLoginModalOpen || showResults) ? "url('/background.png')" : "none",
-          backgroundColor: (isLoginModalOpen || showResults) ? "transparent" : "#d3d3d3"
+          backgroundImage: (isLoginModalOpen || isLoadingResults || showResults) 
+            ? "url('/background.png')" 
+            : "url('/background_n&b.png')",
+          backgroundColor: "transparent"
         }}
       ></div>
 
@@ -370,7 +378,7 @@ function App() {
               />
             )}
           </motion.div>
-        ) : (!isLoginModalOpen && !showResults) ? (
+        ) : (!isLoginModalOpen && !showResults && !isLoadingResults) ? (
           <motion.div
             key="desktop"
             initial={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
@@ -383,7 +391,7 @@ function App() {
             className="relative h-full w-full"
           >
             <h1 
-              className="absolute text-5xl font-medium text-gray-800 tracking-wide drop-shadow-md text-center w-full home-title"
+              className="absolute text-5xl font-medium text-white tracking-wide drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] text-center w-full home-title"
               style={{ 
                 top: '15%',
                 left: '50%', 
@@ -430,7 +438,13 @@ function App() {
                   className="home-results-container"
                 >
                   <button
-                    onClick={() => setShowResults(true)}
+                    onClick={() => {
+                      setIsLoadingResults(true);
+                      setTimeout(() => {
+                        setIsLoadingResults(false);
+                        setShowResults(true);
+                      }, 3000);
+                    }}
                     className="px-6 py-3.5 bg-gray-900/80 backdrop-blur-md text-white rounded-2xl font-bold shadow-2xl hover:bg-black transition-all hover:scale-105 active:scale-95 border border-white/10"
                   >
                     Voir mes résultats
@@ -450,6 +464,10 @@ function App() {
           setActivePage(null);
         }}
       />
+
+      <AnimatePresence>
+        {isLoadingResults && <ResultLoader />}
+      </AnimatePresence>
 
       <LoginModal 
         isOpen={isLoginModalOpen} 

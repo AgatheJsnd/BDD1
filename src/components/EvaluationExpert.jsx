@@ -180,17 +180,17 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail, initialAnswer
                       key={option.label}
                       onClick={() => handleAnswerChange(currentQ.id, option.value)}
                       className={`
-                        flex items-center gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all text-left
-                        ${isSelected ? 'bg-[#d6b364] text-white border-[#d6b364]' : 'bg-gray-50 border-gray-200 hover:border-[#d6b364] hover:bg-[#d6b364]/5'}
+                        flex items-start gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all text-left
+                        ${isSelected ? 'bg-gray-200 border-gray-400 text-gray-900' : 'bg-gray-50 border-gray-200 hover:border-[#d6b364] hover:bg-[#d6b364]/5 text-gray-900'}
                       `}
                     >
                       <span className={`
-                        flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-sm sm:text-base
-                        ${isSelected ? 'bg-white text-[#d6b364]' : 'bg-gray-300 text-gray-700'}
+                        flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-sm sm:text-base
+                        ${isSelected ? 'bg-gray-400 text-white' : 'bg-gray-300 text-gray-700'}
                       `}>
                         {option.label}
                       </span>
-                      <span className={`text-sm sm:text-base ${isSelected ? 'text-white' : 'text-gray-700'}`}>{option.value}</span>
+                      <span className="flex-1 text-sm sm:text-base">{option.value}</span>
                     </button>
                   );
                 })}
