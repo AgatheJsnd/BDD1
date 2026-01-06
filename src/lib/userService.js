@@ -649,6 +649,55 @@ export async function updateProudProject(email, proudProject) {
  * @param {string} englishLevel - Le niveau d'anglais sélectionné
  * @returns {Promise} Résultat de la mise à jour
  */
+export async function updateTestResult(email, testResult) {
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré');
+      return { success: false, error: 'Supabase non configuré' };
+    }
+
+    // Vérifier si le candidat existe
+    const existingUser = await getUserByEmail(email);
+    
+    if (!existingUser.success || !existingUser.data) {
+      console.warn('⚠️ Candidat non trouvé pour:', email);
+      // Créer un candidat minimal si nécessaire
+      const { data: newData, error: newError } = await supabase
+        .from('candidats')
+        .insert([{ email, test_result: testResult }])
+        .select()
+        .single();
+      
+      if (newError) {
+        console.error('❌ Erreur lors de la création du candidat:', newError);
+        return { success: false, error: newError };
+      }
+      
+      console.log('✅ Résultat du test enregistré:', testResult);
+      return { success: true, data: newData };
+    }
+
+    // Mettre à jour le résultat du test
+    const { data, error } = await supabase
+      .from('candidats')
+      .update({ test_result: testResult })
+      .eq('email', email)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Erreur lors de la mise à jour du résultat du test:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ Résultat du test enregistré:', testResult);
+    return { success: true, data };
+  } catch (error) {
+    console.error('❌ Erreur inattendue lors de la mise à jour du résultat du test:', error);
+    return { success: false, error };
+  }
+}
+
 export async function updateEnglishLevel(email, englishLevel) {
   console.log('🔧 updateEnglishLevel appelé avec:', { email, englishLevel });
   

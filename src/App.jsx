@@ -69,11 +69,11 @@ function App() {
       setIsInitialLoading(false);
     } else {
       // Ouvrir la modale après 1 seconde seulement si pas de quiz en cours
-      const timer = setTimeout(() => {
-        setIsLoginModalOpen(true);
+    const timer = setTimeout(() => {
+      setIsLoginModalOpen(true);
         setIsInitialLoading(false);
-      }, 1000);
-      return () => clearTimeout(timer);
+    }, 1000);
+    return () => clearTimeout(timer);
     }
   }, []);
 
@@ -302,7 +302,7 @@ function App() {
   const handlePieceClick = (pieceId) => {
     const piece = puzzlePieces.find(p => p.id === pieceId);
     if (piece && !piece.isLocked) {
-      setActivePage(pieceId);
+    setActivePage(pieceId);
     }
   };
 
@@ -320,7 +320,7 @@ function App() {
           setShowResults(true);
         }, 3000);
       } else {
-        setActivePage(null);
+    setActivePage(null);
       }
     } else {
       setActivePage(null);
@@ -407,7 +407,7 @@ function App() {
             </h1>
 
             <div className="home-pieces">
-              {puzzlePieces.map((piece) => (
+        {puzzlePieces.map((piece) => (
                 <div 
                   key={piece.id}
                   className="home-piece"
@@ -417,16 +417,16 @@ function App() {
                     transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
                   }}
                 >
-                  <PuzzlePiece
-                    color={piece.color}
+          <PuzzlePiece
+            color={piece.color}
                     blobRadius={piece.blobRadius}
                     sizeClass="w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56"
                     label={piece.label}
                     labelFill={piece.labelFill}
                     labelGlowRgb={piece.labelGlowRgb}
-                    position={piece.position}
-                    rotation={piece.rotation}
-                    onClick={() => handlePieceClick(piece.id)}
+            position={piece.position}
+            rotation={piece.rotation}
+            onClick={() => handlePieceClick(piece.id)}
                     isClickable={!piece.isLocked}
                     isHeartbeat={piece.isHeartbeat}
                   />
@@ -454,7 +454,7 @@ function App() {
                   </button>
                 </motion.div>
               )}
-            </div>
+      </div>
           </motion.div>
         ) : null}
       </AnimatePresence>

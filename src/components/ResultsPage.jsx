@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { getUserByEmail } from '../lib/userService';
+import { getUserByEmail, updateTestResult } from '../lib/userService';
 
 // Mapping inverse pour retrouver les réponses depuis les personas
 const personaToAnswer = {
@@ -112,8 +112,32 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
         }
       }
 
-      setAlbertPercent(Math.round(albertScore * 100) / 100); // Arrondir à 2 décimales
-      setEugeniaPercent(Math.round(eugeniaScore * 100) / 100); // Arrondir à 2 décimales
+      const finalAlbertPercent = Math.round(albertScore * 100) / 100;
+      const finalEugeniaPercent = Math.round(eugeniaScore * 100) / 100;
+      
+      setAlbertPercent(finalAlbertPercent);
+      setEugeniaPercent(finalEugeniaPercent);
+      
+      // Déterminer l'école dominante et l'enregistrer dans la base de données
+      let dominantSchool = null;
+      if (finalAlbertPercent > finalEugeniaPercent) {
+        dominantSchool = 'Albert School';
+      } else if (finalEugeniaPercent > finalAlbertPercent) {
+        dominantSchool = 'Eugenia School';
+      } else {
+        dominantSchool = 'Égalité';
+      }
+      
+      // Enregistrer le résultat dans la base de données
+      if (userEmail && dominantSchool) {
+        try {
+          await updateTestResult(userEmail, dominantSchool);
+          console.log('✅ Résultat du test enregistré:', dominantSchool);
+        } catch (error) {
+          console.error('❌ Erreur lors de l\'enregistrement du résultat:', error);
+        }
+      }
+      
       setLoading(false);
     } catch (error) {
       console.error('Erreur lors du calcul des résultats:', error);
