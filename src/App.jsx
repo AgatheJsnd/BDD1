@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PuzzlePiece from './components/PuzzlePiece';
 import LoginModal from './components/LoginModal';
+import ResumeNotification from './components/ResumeNotification';
 import { saveUserData, getAllUsers } from './lib/userService';
 import Quiz from './components/Quiz';
 import EvaluationExpert from './components/EvaluationExpert';
@@ -15,27 +16,241 @@ function App() {
   const [user, setUser] = useState(null);
   const [completedSteps, setCompletedSteps] = useState([]); // [1, 2, 3]
   const [showResults, setShowResults] = useState(false);
+  const [showResumeNotification, setShowResumeNotification] = useState(false);
   // Réponses persistées (pour retrouver les choix en revenant en arrière)
   const [blueAnswers, setBlueAnswers] = useState({});
   const [greenAnswers, setGreenAnswers] = useState({});
   const [redAnswers, setRedAnswers] = useState({ q1: '', q2: '', q3: '' });
 
-  // Ouvrir la modale après 1 seconde
+  // Charger les données sauvegardées au démarrage
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoginModalOpen(true);
-    }, 1000);
-    return () => clearTimeout(timer);
+    const savedUser = localStorage.getItem('quiz_user');
+    const savedCompletedSteps = localStorage.getItem('quiz_completedSteps');
+    const savedBlueAnswers = localStorage.getItem('quiz_blueAnswers');
+    const savedGreenAnswers = localStorage.getItem('quiz_greenAnswers');
+    const savedRedAnswers = localStorage.getItem('quiz_redAnswers');
+    const savedActivePage = localStorage.getItem('quiz_activePage');
+
+    // Vérifier si l'utilisateur a commencé un quiz (a des réponses ou une page active)
+    const hasStartedQuiz = (savedBlueAnswers && savedBlueAnswers !== '{}') || 
+                          (savedGreenAnswers && savedGreenAnswers !== '{}') || 
+                          (savedRedAnswers && savedRedAnswers !== '{"q1":"","q2":"","q3":""}') || 
+                          savedActivePage;
+
+    if (savedUser && hasStartedQuiz) {
+      // Restaurer l'utilisateur et les données pour afficher l'interface du quiz
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+        
+        if (savedCompletedSteps) {
+          setCompletedSteps(JSON.parse(savedCompletedSteps));
+        }
+        if (savedBlueAnswers) {
+          setBlueAnswers(JSON.parse(savedBlueAnswers));
+        }
+        if (savedGreenAnswers) {
+          setGreenAnswers(JSON.parse(savedGreenAnswers));
+        }
+        if (savedRedAnswers) {
+          setRedAnswers(JSON.parse(savedRedAnswers));
+        }
+      } catch (e) {
+        console.error('Erreur lors du chargement des données:', e);
+      }
+      
+      // Afficher la notification pour reprendre (par-dessus l'interface du quiz)
+      setShowResumeNotification(true);
+      // S'assurer que le modal de connexion est fermé
+      setIsLoginModalOpen(false);
+    } else {
+      // Ouvrir la modale après 1 seconde seulement si pas de quiz en cours
+      const timer = setTimeout(() => {
+        setIsLoginModalOpen(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
   }, []);
+
+  // Sauvegarder les réponses dans localStorage à chaque changement
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('quiz_user', JSON.stringify(user));
+    }
+  }, [user]);
+
+  useEffect(() => {
+    localStorage.setItem('quiz_completedSteps', JSON.stringify(completedSteps));
+  }, [completedSteps]);
+
+  useEffect(() => {
+    localStorage.setItem('quiz_blueAnswers', JSON.stringify(blueAnswers));
+  }, [blueAnswers]);
+
+  useEffect(() => {
+    localStorage.setItem('quiz_greenAnswers', JSON.stringify(greenAnswers));
+  }, [greenAnswers]);
+
+  useEffect(() => {
+    localStorage.setItem('quiz_redAnswers', JSON.stringify(redAnswers));
+  }, [redAnswers]);
 
   const handleLogin = async (userData) => {
     setUser(userData);
     setIsLoginModalOpen(false);
     await saveUserData(userData);
+    // Sauvegarder dans localStorage
+    localStorage.setItem('quiz_user', JSON.stringify(userData));
+  };
+
+  // Restaurer les données sauvegardées
+  const handleContinue = () => {
+    const savedUser = localStorage.getItem('quiz_user');
+    const savedCompletedSteps = localStorage.getItem('quiz_completedSteps');
+    const savedBlueAnswers = localStorage.getItem('quiz_blueAnswers');
+    const savedGreenAnswers = localStorage.getItem('quiz_greenAnswers');
+    const savedRedAnswers = localStorage.getItem('quiz_redAnswers');
+    const savedActivePage = localStorage.getItem('quiz_activePage');
+
+    // Restaurer l'utilisateur
+    if (savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+      } catch (e) {
+        console.error('Erreur lors du chargement des données utilisateur:', e);
+      }
+    }
+
+    // Restaurer les étapes complétées
+    if (savedCompletedSteps) {
+      try {
+        const steps = JSON.parse(savedCompletedSteps);
+        setCompletedSteps(steps);
+      } catch (e) {
+        console.error('Erreur lors du chargement des étapes complétées:', e);
+      }
+    }
+
+    // Restaurer les réponses bleues
+    if (savedBlueAnswers) {
+      try {
+        const answers = JSON.parse(savedBlueAnswers);
+        setBlueAnswers(answers);
+      } catch (e) {
+        console.error('Erreur lors du chargement des réponses bleues:', e);
+      }
+    }
+
+    // Restaurer les réponses vertes
+    if (savedGreenAnswers) {
+      try {
+        const answers = JSON.parse(savedGreenAnswers);
+        setGreenAnswers(answers);
+      } catch (e) {
+        console.error('Erreur lors du chargement des réponses vertes:', e);
+      }
+    }
+
+    // Restaurer les réponses rouges
+    if (savedRedAnswers) {
+      try {
+        const answers = JSON.parse(savedRedAnswers);
+        setRedAnswers(answers);
+      } catch (e) {
+        console.error('Erreur lors du chargement des réponses rouges:', e);
+      }
+    }
+
+    // Restaurer ou déterminer la page active
+    let pageToOpen = null;
+    
+    if (savedActivePage) {
+      try {
+        const pageId = parseInt(savedActivePage);
+        if (pageId >= 1 && pageId <= 3) {
+          pageToOpen = pageId;
+        }
+      } catch (e) {
+        console.error('Erreur lors du chargement de la page active:', e);
+      }
+    }
+    
+    // Si aucune page active sauvegardée, déterminer quelle page ouvrir selon les réponses
+    if (!pageToOpen) {
+      try {
+        const blueAnswers = savedBlueAnswers ? JSON.parse(savedBlueAnswers) : {};
+        const greenAnswers = savedGreenAnswers ? JSON.parse(savedGreenAnswers) : {};
+        const redAnswers = savedRedAnswers ? JSON.parse(savedRedAnswers) : {};
+        const completedSteps = savedCompletedSteps ? JSON.parse(savedCompletedSteps) : [];
+
+        // Vérifier si le quiz bleu est complété (3 réponses)
+        const blueCompleted = blueAnswers[1] && blueAnswers[2] && blueAnswers[3];
+        // Vérifier si le quiz vert est complété (3 réponses)
+        const greenCompleted = greenAnswers[1] && greenAnswers[2] && greenAnswers[3];
+        // Vérifier si le quiz rouge est complété (3 réponses)
+        const redCompleted = redAnswers.q1 && redAnswers.q2 && redAnswers.q3;
+
+        // Déterminer quelle page ouvrir
+        if (!blueCompleted || !completedSteps.includes(1)) {
+          pageToOpen = 1; // Ouvrir le quiz bleu
+        } else if (!greenCompleted || !completedSteps.includes(2)) {
+          pageToOpen = 2; // Ouvrir le quiz vert
+        } else if (!redCompleted || !completedSteps.includes(3)) {
+          pageToOpen = 3; // Ouvrir le quiz rouge
+        }
+        // Si tout est complété, on reste sur le bureau
+      } catch (e) {
+        console.error('Erreur lors de la détermination de la page:', e);
+      }
+    }
+
+    // Ouvrir la page déterminée
+    if (pageToOpen) {
+      setActivePage(pageToOpen);
+    }
+
+    // Fermer la notification
+    setShowResumeNotification(false);
+    // S'assurer que le modal de connexion est fermé
+    setIsLoginModalOpen(false);
+  };
+
+  // Retourner à l'accueil (fermer la notification et afficher le modal de connexion)
+  const handleReturnHome = () => {
+    // Vider localStorage
+    localStorage.removeItem('quiz_user');
+    localStorage.removeItem('quiz_completedSteps');
+    localStorage.removeItem('quiz_blueAnswers');
+    localStorage.removeItem('quiz_greenAnswers');
+    localStorage.removeItem('quiz_redAnswers');
+    localStorage.removeItem('quiz_activePage');
+
+    // Réinitialiser les états
+    setUser(null);
+    setCompletedSteps([]);
+    setBlueAnswers({});
+    setGreenAnswers({});
+    setRedAnswers({ q1: '', q2: '', q3: '' });
+    setActivePage(null);
+    
+    // Fermer la notification
+    setShowResumeNotification(false);
+    // Afficher le modal de connexion
+    setIsLoginModalOpen(true);
   };
 
   // État pour savoir quelle page est active (null = bureau principal)
   const [activePage, setActivePage] = useState(null);
+
+  // Sauvegarder la page active dans localStorage
+  useEffect(() => {
+    if (activePage !== null) {
+      localStorage.setItem('quiz_activePage', activePage.toString());
+    } else {
+      localStorage.removeItem('quiz_activePage');
+    }
+  }, [activePage]);
 
   // Étape courante (premier non complété)
   const currentStep = [1, 2, 3].find(step => !completedSteps.includes(step)) || 4;
@@ -240,6 +455,12 @@ function App() {
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)} 
         onLogin={handleLogin}
+      />
+
+      <ResumeNotification
+        isOpen={showResumeNotification}
+        onReturnHome={handleReturnHome}
+        onContinue={handleContinue}
       />
     </div>
   );
