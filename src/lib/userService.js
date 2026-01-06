@@ -315,6 +315,52 @@ export async function updatePersonaScore(email, personas, replace = false) {
       console.log('✅ persona_score après mise à jour:', data[0].persona_score);
       console.log('✅ top_persona après mise à jour:', data[0].top_persona);
     }
+
+    // Mettre à jour automatiquement le mentor correspondant pour ce candidat
+    console.log('🔍 Mise à jour du mentor correspondant...');
+    try {
+      const mentorsResult = await getAllMentors();
+      if (!mentorsResult.success) {
+        console.warn('⚠️ Impossible de récupérer les mentors:', mentorsResult.error);
+        console.warn('💡 La table "mentors" n\'existe peut-être pas encore dans Supabase');
+        console.warn('💡 Voir CREATE_MENTORS_TABLE.md pour créer la table');
+        return { success: true, data }; // Continuer même si les mentors ne sont pas disponibles
+      }
+      
+      if (mentorsResult.data && mentorsResult.data.length > 0) {
+        const matchingMentorId = findMatchingMentor(updatedPersonas, mentorsResult.data);
+        // matched_mentor_id est de type bigint, donc on met null si aucun mentor n'est trouvé
+        const matchedMentorId = matchingMentorId || null;
+        
+        console.log(`🔍 Personas du candidat: [${updatedPersonas.join(', ')}]`);
+        console.log(`🔍 Mentor trouvé: ${matchedMentorId ? `ID ${matchedMentorId}` : 'Aucun'}`);
+        
+        const { data: mentorUpdateData, error: mentorUpdateError } = await supabase
+          .from('candidats')
+          .update({ matched_mentor_id: matchedMentorId })
+          .eq('id', candidatId)
+          .select();
+
+        if (mentorUpdateError) {
+          console.error('❌ Erreur lors de la mise à jour du mentor:', mentorUpdateError);
+          console.error('   Code:', mentorUpdateError.code);
+          console.error('   Message:', mentorUpdateError.message);
+        } else {
+          console.log(`✅ Mentor mis à jour dans matched_mentor_id: ${matchedMentorId || 'NULL'}`);
+          if (mentorUpdateData && mentorUpdateData[0]) {
+            console.log(`✅ Vérification: matched_mentor_id = ${mentorUpdateData[0].matched_mentor_id}`);
+          }
+        }
+      } else {
+        console.warn('⚠️ Aucun mentor trouvé dans la base de données');
+        console.warn('💡 Ajoutez des mentors avec leurs persona_type pour que le matching fonctionne');
+      }
+    } catch (mentorError) {
+      console.error('❌ Erreur exception lors du matching du mentor:', mentorError);
+      console.error('   Stack:', mentorError.stack);
+      // Ne pas faire échouer la fonction principale si le matching échoue
+    }
+
     return { success: true, data }
   } catch (error) {
     console.error('❌ Erreur exception dans updatePersonaScore:', error)
@@ -757,6 +803,193 @@ export async function updateClasse(email, classe) {
     console.error('❌ Erreur exception dans updateClasse:', error)
     console.error('❌ Stack:', error.stack);
     return { success: false, error: error.message || error }
+  }
+}
+
+/**
+ * Récupérer tous les mentors
+ * @returns {Promise} Liste des mentors
+ */
+export async function getAllMentors() {
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    const { data, error } = await supabase
+      .from('mentors')
+      .select('*')
+
+    if (error) {
+      console.error('❌ Erreur lors de la récupération des mentors:', error)
+      return { success: false, error }
+    }
+
+    console.log('✅ Mentors récupérés:', data?.length || 0)
+    return { success: true, data: data || [] }
+  } catch (error) {
+    console.error('❌ Erreur:', error)
+    return { success: false, error }
+  }
+}
+
+/**
+ * Trouver un mentor correspondant au persona_score d'un candidat
+ * @param {Array<string>} candidatPersonas - Tableau des personas du candidat
+ * @param {Array} mentors - Liste de tous les mentors
+ * @returns {number|null} L'ID du mentor correspondant, ou null si aucun
+ */
+function findMatchingMentor(candidatPersonas, mentors) {
+  if (!candidatPersonas || candidatPersonas.length === 0) {
+    return null;
+  }
+
+  // Normaliser les personas du candidat (enlever espaces, convertir en string)
+  const normalizedCandidatPersonas = candidatPersonas
+    .filter(p => p && String(p).trim() !== '')
+    .map(p => String(p).trim());
+
+  if (normalizedCandidatPersonas.length === 0) {
+    return null;
+  }
+
+  // Chercher un mentor qui a au moins un persona en commun
+  // La table mentors utilise persona_type au lieu de persona_score
+  for (const mentor of mentors) {
+    // Essayer persona_type d'abord, puis persona_score en fallback
+    const mentorPersonas = mentor.persona_type || mentor.persona_score;
+    
+    if (!mentorPersonas || !Array.isArray(mentorPersonas)) {
+      continue;
+    }
+
+    // Normaliser les personas du mentor
+    const normalizedMentorPersonas = mentorPersonas
+      .filter(p => p && String(p).trim() !== '')
+      .map(p => String(p).trim());
+
+    // Vérifier s'il y a au moins un persona en commun
+    const hasCommonPersona = normalizedCandidatPersonas.some(cp => 
+      normalizedMentorPersonas.includes(cp)
+    );
+
+    if (hasCommonPersona && mentor.id) {
+      console.log(`✅ Mentor trouvé: ID ${mentor.id} (${mentor.prénom_nom || 'sans nom'}) - personas communs`);
+      console.log(`   Candidat: [${normalizedCandidatPersonas.join(', ')}] ↔ Mentor: [${normalizedMentorPersonas.join(', ')}]`);
+      return mentor.id; // Retourner l'ID du mentor au lieu du nom
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Associer automatiquement les mentors aux candidats selon leur persona_score
+ * @returns {Promise} Résultat de l'association
+ */
+export async function matchMentorsToCandidats() {
+  console.log('🔍 ===== DÉBUT MATCHING MENTORS =====');
+  
+  try {
+    if (!supabase) {
+      console.error('❌ Supabase n\'est pas configuré')
+      return { success: false, error: 'Supabase non configuré' }
+    }
+
+    // Récupérer tous les candidats
+    console.log('📋 Récupération de tous les candidats...');
+    const candidatsResult = await getAllUsers();
+    if (!candidatsResult.success || !candidatsResult.data) {
+      console.error('❌ Impossible de récupérer les candidats');
+      return { success: false, error: 'Impossible de récupérer les candidats' };
+    }
+
+    const candidats = candidatsResult.data;
+    console.log(`📊 ${candidats.length} candidat(s) trouvé(s)`);
+
+    // Récupérer tous les mentors
+    console.log('👥 Récupération de tous les mentors...');
+    const mentorsResult = await getAllMentors();
+    if (!mentorsResult.success) {
+      console.error('❌ Impossible de récupérer les mentors');
+      return { success: false, error: 'Impossible de récupérer les mentors' };
+    }
+
+    const mentors = mentorsResult.data || [];
+    console.log(`👥 ${mentors.length} mentor(s) trouvé(s)`);
+
+    if (mentors.length === 0) {
+      console.warn('⚠️ Aucun mentor trouvé dans la base de données');
+    }
+
+    // Pour chaque candidat, trouver un mentor correspondant
+    let matchedCount = 0;
+    let undeterminedCount = 0;
+    let updatedCount = 0;
+
+    for (const candidat of candidats) {
+      const candidatId = candidat.id;
+      const candidatEmail = candidat.email;
+      const candidatPersonas = candidat.persona_score;
+
+      console.log(`\n🔍 Traitement du candidat ${candidatId} (${candidatEmail})`);
+
+      let matchedMentorId = null;
+
+      // Si le candidat n'a pas de persona_score, mettre null
+      if (!candidatPersonas || !Array.isArray(candidatPersonas) || candidatPersonas.length === 0) {
+        console.log('  ⚠️ Aucun persona_score → null');
+        matchedMentorId = null;
+        undeterminedCount++;
+      } else {
+        // Chercher un mentor correspondant (retourne l'ID du mentor)
+        const matchingMentorId = findMatchingMentor(candidatPersonas, mentors);
+        if (matchingMentorId) {
+          matchedMentorId = matchingMentorId;
+          matchedCount++;
+          console.log(`  ✅ Mentor trouvé: ID ${matchingMentorId}`);
+        } else {
+          matchedMentorId = null;
+          undeterminedCount++;
+          console.log('  ⚠️ Aucun mentor correspondant → null');
+        }
+      }
+
+      // Mettre à jour le candidat avec l'ID du mentor dans matched_mentor_id
+      const { data, error } = await supabase
+        .from('candidats')
+        .update({ matched_mentor_id: matchedMentorId })
+        .eq('id', candidatId)
+        .select();
+
+      if (error) {
+        console.error(`  ❌ Erreur lors de la mise à jour du candidat ${candidatId}:`, error);
+      } else {
+        updatedCount++;
+        console.log(`  ✅ Candidat ${candidatId} mis à jour avec: ${matchedMentorId}`);
+      }
+    }
+
+    console.log('\n📊 ===== RÉSUMÉ DU MATCHING =====');
+    console.log(`✅ Candidats avec mentor trouvé: ${matchedCount}`);
+    console.log(`⚠️ Candidats "à déterminer": ${undeterminedCount}`);
+    console.log(`💾 Candidats mis à jour: ${updatedCount}/${candidats.length}`);
+    console.log('🔍 ===== FIN MATCHING MENTORS =====\n');
+
+    return {
+      success: true,
+      data: {
+        total: candidats.length,
+        matched: matchedCount,
+        undetermined: undeterminedCount,
+        updated: updatedCount
+      }
+    };
+  } catch (error) {
+    console.error('❌ Erreur exception dans matchMentorsToCandidats:', error);
+    console.error('❌ Stack:', error.stack);
+    return { success: false, error: error.message || error };
   }
 }
 

@@ -26,12 +26,29 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
   const [albertPercent, setAlbertPercent] = useState(0);
   const [eugeniaPercent, setEugeniaPercent] = useState(0);
   const [candidatData, setCandidatData] = useState(null);
+  const [showAnimation, setShowAnimation] = useState(true);
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     if (isOpen && userEmail) {
       calculateResults();
     }
   }, [userEmail, isOpen]);
+
+  useEffect(() => {
+    if (!loading) {
+      // Démarrer l'animation de rotation pendant 5 secondes
+      setShowAnimation(true);
+      setShowResults(false);
+      
+      const timer = setTimeout(() => {
+        setShowAnimation(false);
+        setShowResults(true);
+      }, 5000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [loading]);
 
   const calculateResults = async () => {
     try {
@@ -125,6 +142,39 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
                  eugeniaPercent > albertPercent ? 'Eugenia School' : 
                  'Égalité';
 
+  // Logo Albert School (bleu) - Version complète pour l'animation
+  const AlbertLogo = () => (
+    <div className="flex items-center justify-center w-full h-full">
+      <svg width="800" height="600" viewBox="0 0 800 600" className="w-full h-full max-w-full max-h-full" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <linearGradient id="albertGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#87CEEB" />
+            <stop offset="100%" stopColor="#E8F4FD" />
+          </linearGradient>
+        </defs>
+        {/* Grand cercle bleu clair (cercle plein sur le côté droit) */}
+        <circle cx="550" cy="300" r="200" fill="url(#albertGradient)" />
+        {/* Petit cercle bleu foncé (attaché au côté gauche du grand cercle, sans espace) */}
+        {/* Le petit cercle est positionné de sorte que son bord droit touche le bord gauche du grand cercle */}
+        {/* Position: cx du grand cercle (550) - rayon du grand cercle (200) = 350, puis on soustrait le rayon du petit (80) pour centrer le petit cercle */}
+        <circle cx="270" cy="300" r="80" fill="#1E3A8A" stroke="#0e1d45" strokeWidth="2" />
+      </svg>
+    </div>
+  );
+
+  // Logo Eugenia School (jaune moutarde et bordeaux) - Version complète pour l'animation
+  const EugeniaLogo = () => (
+    <div className="flex items-center justify-center w-full h-full">
+      <svg width="800" height="600" viewBox="0 0 800 600" className="w-full h-full max-w-full max-h-full" preserveAspectRatio="xMidYMid meet">
+        {/* Grand cercle jaune moutarde (cercle plein sur le côté droit) */}
+        <circle cx="550" cy="300" r="200" fill="#E3AB36" />
+        {/* Petit cercle bordeaux (attaché au côté gauche du grand cercle, sans espace) */}
+        {/* Le petit cercle est positionné de sorte que son bord droit touche le bord gauche du grand cercle */}
+        <circle cx="270" cy="300" r="80" fill="#5E1A26" stroke="#3a0f18" strokeWidth="2" />
+      </svg>
+    </div>
+  );
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -156,7 +206,56 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
                   <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mb-4"></div>
                   <p className="text-xl font-medium text-gray-600">Génération de ton profil...</p>
                 </div>
-              ) : (
+              ) : showAnimation ? (
+                // Animation de rotation comme une pièce de monnaie
+                <div className="flex items-center justify-center py-8 min-h-[600px] w-full overflow-hidden" style={{ perspective: '2000px' }}>
+                  <motion.div
+                    className="relative"
+                    style={{
+                      width: '600px',
+                      height: '600px',
+                      maxWidth: '90vw',
+                      maxHeight: '90vh',
+                      transformStyle: 'preserve-3d',
+                    }}
+                    animate={{
+                      rotateY: [0, 180, 360, 540, 720, 900, 1080, 1260, 1440, 1620, 1800],
+                    }}
+                    transition={{
+                      duration: 5,
+                      ease: "linear",
+                      repeat: 0,
+                    }}
+                  >
+                    {/* Face avant - Albert School */}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(0deg)',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    >
+                      <AlbertLogo />
+                    </motion.div>
+                    {/* Face arrière - Eugenia School */}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center"
+                      style={{
+                        backfaceVisibility: 'hidden',
+                        WebkitBackfaceVisibility: 'hidden',
+                        transform: 'rotateY(180deg)',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    >
+                      <EugeniaLogo />
+                    </motion.div>
+                  </motion.div>
+                </div>
+              ) : showResults ? (
                 <div className="space-y-8">
                   <h1 
                     className="text-3xl sm:text-4xl font-medium text-gray-800 tracking-wide drop-shadow-md text-center mb-8"
@@ -288,7 +387,7 @@ const ResultsPage = ({ userEmail, onBack, isOpen }) => {
                     </div>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
           </motion.div>
         </motion.div>
