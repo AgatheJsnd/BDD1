@@ -354,6 +354,18 @@ export async function updatePersonaScore(email, personas, replace = false) {
       } else {
         console.warn('⚠️ Aucun mentor trouvé dans la base de données');
         console.warn('💡 Ajoutez des mentors avec leurs persona_type pour que le matching fonctionne');
+        // Mettre null dans matched_mentor_id si aucun mentor n'est disponible
+        const { data: mentorUpdateData, error: mentorUpdateError } = await supabase
+          .from('candidats')
+          .update({ matched_mentor_id: null })
+          .eq('id', candidatId)
+          .select();
+        
+        if (mentorUpdateError) {
+          console.error('❌ Erreur lors de la mise à jour du mentor (null):', mentorUpdateError);
+        } else {
+          console.log('✅ matched_mentor_id mis à null (aucun mentor disponible)');
+        }
       }
     } catch (mentorError) {
       console.error('❌ Erreur exception lors du matching du mentor:', mentorError);
@@ -885,12 +897,14 @@ export async function getAllMentors() {
 
 /**
  * Trouver un mentor correspondant au persona_score d'un candidat
- * @param {Array<string>} candidatPersonas - Tableau des personas du candidat
+ * Compare le persona_type du mentor avec le persona_score du candidat
+ * @param {Array<string>} candidatPersonas - Tableau des personas du candidat (persona_score)
  * @param {Array} mentors - Liste de tous les mentors
  * @returns {number|null} L'ID du mentor correspondant, ou null si aucun
  */
 function findMatchingMentor(candidatPersonas, mentors) {
   if (!candidatPersonas || candidatPersonas.length === 0) {
+    console.log('⚠️ findMatchingMentor: Aucun persona_score pour le candidat');
     return null;
   }
 
@@ -900,36 +914,51 @@ function findMatchingMentor(candidatPersonas, mentors) {
     .map(p => String(p).trim());
 
   if (normalizedCandidatPersonas.length === 0) {
+    console.log('⚠️ findMatchingMentor: Aucun persona valide après normalisation');
     return null;
   }
 
-  // Chercher un mentor qui a au moins un persona en commun
-  // La table mentors utilise persona_type au lieu de persona_score
+  console.log(`🔍 Recherche d'un mentor pour les personas: [${normalizedCandidatPersonas.join(', ')}]`);
+
+  // Chercher un mentor dont le persona_type correspond à l'un des personas du candidat
   for (const mentor of mentors) {
-    // Essayer persona_type d'abord, puis persona_score en fallback
-    const mentorPersonas = mentor.persona_type || mentor.persona_score;
+    // Le mentor a un persona_type (string ou array)
+    let mentorPersonaType = mentor.persona_type;
     
-    if (!mentorPersonas || !Array.isArray(mentorPersonas)) {
+    // Si persona_type est un array, prendre le premier élément
+    if (Array.isArray(mentorPersonaType)) {
+      mentorPersonaType = mentorPersonaType[0];
+    }
+    
+    // Normaliser le persona_type du mentor
+    if (!mentorPersonaType) {
+      continue;
+    }
+    
+    const normalizedMentorPersonaType = String(mentorPersonaType).trim();
+    
+    if (normalizedMentorPersonaType === '') {
       continue;
     }
 
-    // Normaliser les personas du mentor
-    const normalizedMentorPersonas = mentorPersonas
-      .filter(p => p && String(p).trim() !== '')
-      .map(p => String(p).trim());
+    // Vérifier si le persona_type du mentor correspond à l'un des personas du candidat
+    const hasMatchingPersona = normalizedCandidatPersonas.some(cp => {
+      const match = cp.toLowerCase() === normalizedMentorPersonaType.toLowerCase();
+      if (match) {
+        console.log(`   ✅ Match trouvé: "${cp}" === "${normalizedMentorPersonaType}"`);
+      }
+      return match;
+    });
 
-    // Vérifier s'il y a au moins un persona en commun
-    const hasCommonPersona = normalizedCandidatPersonas.some(cp => 
-      normalizedMentorPersonas.includes(cp)
-    );
-
-    if (hasCommonPersona && mentor.id) {
-      console.log(`✅ Mentor trouvé: ID ${mentor.id} (${mentor.prénom_nom || 'sans nom'}) - personas communs`);
-      console.log(`   Candidat: [${normalizedCandidatPersonas.join(', ')}] ↔ Mentor: [${normalizedMentorPersonas.join(', ')}]`);
-      return mentor.id; // Retourner l'ID du mentor au lieu du nom
+    if (hasMatchingPersona && mentor.id) {
+      console.log(`✅ Mentor trouvé: ID ${mentor.id} (${mentor.prénom_nom || 'sans nom'})`);
+      console.log(`   Candidat persona_score: [${normalizedCandidatPersonas.join(', ')}]`);
+      console.log(`   Mentor persona_type: "${normalizedMentorPersonaType}"`);
+      return mentor.id; // Retourner l'ID du mentor
     }
   }
 
+  console.log(`⚠️ Aucun mentor trouvé avec un persona_type correspondant aux personas du candidat`);
   return null;
 }
 
