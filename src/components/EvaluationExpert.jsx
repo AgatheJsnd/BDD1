@@ -50,6 +50,15 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail, initialAnswer
   }, [answers, onSaveAnswers]);
 
   const handleNext = () => {
+    // Vérifier qu'une réponse a été donnée pour la question actuelle
+    const currentQ = questions[currentQuestion];
+    const currentAnswer = answers[`q${currentQ.id}`];
+    
+    if (!currentAnswer || (currentQ.type === 'text' && !currentAnswer.trim())) {
+      alert('Veuillez répondre à la question avant de continuer.');
+      return;
+    }
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     }
@@ -213,14 +222,24 @@ const EvaluationExpert = ({ onBack, onNext, onComplete, userEmail, initialAnswer
           {!isLastQuestion ? (
             <button
               onClick={handleNext}
-              className="px-6 py-2.5 sm:px-8 sm:py-3 bg-[#d6b364] hover:bg-[#c6a85c] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-sm sm:text-base"
+              disabled={!answers[`q${currentQ.id}`] || (currentQ.type === 'text' && !answers[`q${currentQ.id}`]?.trim())}
+              className={`px-6 py-2.5 sm:px-8 sm:py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-sm sm:text-base ${
+                answers[`q${currentQ.id}`] && (currentQ.type !== 'text' || answers[`q${currentQ.id}`]?.trim())
+                  ? 'bg-[#d6b364] hover:bg-[#c6a85c] text-white cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Suivant →
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="w-full px-6 py-3 sm:px-8 sm:py-4 bg-[#d6b364] hover:bg-[#c6a85c] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-base sm:text-lg"
+              disabled={!answers[`q${currentQ.id}`] || (currentQ.type === 'text' && !answers[`q${currentQ.id}`]?.trim())}
+              className={`w-full px-6 py-3 sm:px-8 sm:py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-base sm:text-lg ${
+                answers[`q${currentQ.id}`] && (currentQ.type !== 'text' || answers[`q${currentQ.id}`]?.trim())
+                  ? 'bg-[#d6b364] hover:bg-[#c6a85c] text-white cursor-pointer'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Valider mes réponses
             </button>

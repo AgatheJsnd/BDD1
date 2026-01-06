@@ -45,6 +45,13 @@ const Quiz = ({ onBack, onNext }) => {
   };
 
   const handleNext = () => {
+    // Vérifier qu'une réponse a été donnée pour la question actuelle
+    const currentQ = questions[currentQuestion];
+    if (!selectedAnswers[currentQ.id]) {
+      alert('Veuillez sélectionner une réponse avant de continuer.');
+      return;
+    }
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
@@ -130,7 +137,12 @@ const Quiz = ({ onBack, onNext }) => {
         <div className="flex justify-end items-center mt-8">
           <button
             onClick={handleNext}
-            className="px-6 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg"
+            disabled={!selectedAnswers[currentQ.id]}
+            className={`px-6 py-2 rounded-lg font-semibold transition-colors shadow-md hover:shadow-lg ${
+              selectedAnswers[currentQ.id] 
+                ? 'bg-yellow-600 hover:bg-yellow-700 text-white cursor-pointer' 
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
             {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>

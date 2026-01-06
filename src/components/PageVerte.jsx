@@ -156,6 +156,13 @@ const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
   };
 
   const handleNext = async () => {
+    // Vérifier qu'une réponse a été donnée pour la question actuelle
+    const currentQ = questions[currentQuestion];
+    if (!selectedAnswers[currentQ.id]) {
+      alert('Veuillez sélectionner une réponse avant de continuer.');
+      return;
+    }
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
@@ -242,7 +249,12 @@ const PageVerte = ({ onBack, onComplete, userEmail, initialAnswers = {}, onSaveA
         <div className="question-card-footer p-4 sm:p-6 border-t border-gray-100 bg-gray-50/50 flex justify-end items-center">
           <button 
             onClick={handleNext}
-            className="px-6 py-2.5 sm:px-8 sm:py-3 bg-[#3d614a] hover:bg-[#4d7a5a] text-white rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-sm sm:text-base"
+            disabled={!selectedAnswers[currentQ.id]}
+            className={`px-6 py-2.5 sm:px-8 sm:py-3 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl active:scale-95 text-sm sm:text-base ${
+              selectedAnswers[currentQ.id]
+                ? 'bg-[#3d614a] hover:bg-[#4d7a5a] text-white cursor-pointer'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
           >
             {currentQuestion === questions.length - 1 ? 'Étape suivante →' : 'Suivant →'}
           </button>
